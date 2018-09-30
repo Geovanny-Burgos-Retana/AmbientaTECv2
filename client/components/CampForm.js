@@ -14,8 +14,6 @@ class CampForm extends Component {
 			email:'',
 			descripcion: '',
 			habilitada: false,
-			Hashtag1: 'fun',
-			Hashtag2: 'trash',
 			hashtag: ''
 		};
 		this.agregarCampana = this.agregarCampana.bind(this);
@@ -23,11 +21,9 @@ class CampForm extends Component {
 	}
 
 	agregarCampana(e){
-		const Hashtag22="#AmbientaTEC_more_"+this.state.Hashtag1+"_less_"+this.state.Hashtag2;
-		this.setState({
-			hashtag: Hashtag22
-		})
-
+		var re = / /gi;
+		this.state.hashtag = "#AmbientaTEC_" + String(this.state.nombre).replace(re,"");
+		console.log(this.state);
 		fetch('/api/campanas',{
 			method: 'POST',
 			body: JSON.stringify(this.state),
@@ -47,8 +43,6 @@ class CampForm extends Component {
 				email:'',
 				descripcion: '',
 				habilitada: false,
-				Hashtag1: 'fun',
-				Hashtag2: 'trash',
 				hashtag: ''
 			});
 		})
