@@ -1,0 +1,38 @@
+{
+  "name": "ambientatec",
+  "version": "1.0.0",
+  "description": "AmbientaTEC built with the MERN stack",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "webpack": "webpack --mode development --watch"
+  },
+  "author": "Wilbert Gonzalez",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.0.1",
+    "express": "^4.16.3",
+    "firebase": "^5.4.2",
+    "mongoose": "^5.2.12",
+    "react-bootstrap": "^0.32.4",
+    "react-native": "^0.56.1",
+    "reactjs-modal": "^4.0.0",
+    "reactjs-popup": "^1.2.0",
+    "styled-components": "^3.4.6"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "nodemon": "^1.18.4",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0",
+    "style-loader": "^0.23.0",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0"
+  }
+}
