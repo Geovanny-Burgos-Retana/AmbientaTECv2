@@ -38,7 +38,8 @@ const CuentaSchema = new Schema({
   retosPerdidos:{
     type: Array,
     required:false
-  }
+  },
+  campanias:[String]
 });
 
 module.exports = Cuenta = mongoose.model('cuenta', CuentaSchema);

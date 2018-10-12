@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 // Empcuentaresa Model
 const Cuenta = require('../../models/cuenta');
@@ -16,10 +17,9 @@ router.post('/', async (req, res) => {
         email: req.body.email,
         retosParticipacion: req.body.retosParticipacion,
         retosGanados: req.body.retosGanados,
-        retosPerdidos:req.body.retosPerdidos
+        retosPerdidos:req.body.retosPerdidos,
+        campanias: []
     });
-    console.log("Nuevo usuario: "+ newCuenta);
-
     await newCuenta.save().then(cuenta => res.json(cuenta));
 });
 
@@ -70,6 +70,24 @@ router.get('/unica/:id', async (req, res) => {
     .catch(err => res.status(404).json({ success: false }));
 });
   
+// Agregar campaña al arreglo  de identificadores de campañas
+router.put('/addCampania/:_id', async (req, res) => {
+    if( req.body.campania != null ){
+        await Cuenta.updateOne( { _id: mongoose.Types.ObjectId(req.params._id) }, { $push: { campanias: { $each: [ req.body.campania ] }, } } );
+        res.json({ status: 'Campaña agregada de lista' });
+    }else{
+        res.json({ status: 'Campo campania no contemplado en el json' });
+    }    
+});
 
+// Eliminar campaña al arreglo de identificadores de campañas
+router.put('/delCampania/:_id', async (req, res) => {
+    if( req.body.campania != null){
+        await Cuenta.updateOne( { _id: mongoose.Types.ObjectId(req.params._id) }, { $pull: { campanias: { $in: [ req.body.campania ] } } }, { multi: true } );    
+        res.json({ status: 'Campaña eliminada de lista' });
+    }else{
+        res.json({ status: 'Campo campania no contemplado en el json' });
+    }
+});
 
 module.exports = router;

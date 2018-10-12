@@ -16,6 +16,7 @@ class CampForm extends Component {
 			habilitada: false,
 			hashtag: ''
 		};
+		this.userId = '';
 		this.agregarCampana = this.agregarCampana.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
@@ -51,10 +52,10 @@ class CampForm extends Component {
 	}
 
 	componentDidMount() {
-		const usuario=this.props.usuario;
+		this.userId = this.props.usuario.userID;
 		this.setState({
-			organizador: usuario.name,
-			email: usuario.email
+			organizador: this.props.usuario.name,
+			email: this.props.usuario.email
 		})
 	}
 

@@ -11,6 +11,8 @@ const solicitudes = require('./routes/api/solicitudes');
 const challenges = require('./routes/api/challenges');
 const tips = require('./routes/api/tips');
 const recomendaciones = require('./routes/api/recomendaciones');
+const hasthagMoreLess = require('./routes/api/hashtagsMoreLess');
+
 
 const app = express();
 
@@ -35,6 +37,7 @@ app.use('/api/solicitudes', solicitudes);
 app.use('/api/challenges', challenges);
 app.use('/api/tips', tips);
 app.use('/api/recomendaciones', recomendaciones);
+app.use('/api/hashtagMoreLess', hasthagMoreLess);
 
 //Static files
 
