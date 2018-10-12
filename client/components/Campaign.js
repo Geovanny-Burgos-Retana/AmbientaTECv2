@@ -20,18 +20,15 @@ class Campaign extends Component {
 	}
 	componentDidMount() {
 		this.fetchCampanas();
+		console.log(this.props);
 	}
 
-	participar(event, idCampana, idUser) {
-		console.log('Checkbox checked:', (event.target.checked));
-		console.log('Campana:', idCampana);
+	participar(event, idCampana) {
 		if (event.target.checked) {
-			console.log('Entra IF');
-			fetch('api/participantes', {
-				method: 'POST',
+			fetch(`api/cuentas/addCampania/${this.props.usuario._id}`, {
+				method: 'PUT',
 				body: JSON.stringify({
-					organizador: idUser,
-					idCamp: idCampana
+					campania: idCampana
 				}),
 				headers: {
 					'Accept': 'application/json',
@@ -40,14 +37,16 @@ class Campaign extends Component {
 			})
 				.then(res => res.json())
 				.then(data => {
-					M.toast({ html: 'Se espera su participacion.' });
+					console.log(data);
 				})
 				.catch(err => console.error(err));
 		} else {
-			console.log('ELSE');
 			if (confirm('Quieres cancelar la asistencia?')) {
-				fetch(`/api/participantes/${idUser}`, {
-					method: 'DELETE',
+				fetch(`/api/cuentas/delCampania/${this.props.usuario._id}`, {
+					method: 'PUT',
+					body: JSON.stringify({
+						campania: idCampana
+					}),
 					headers: {
 						'Accept': 'application/json',
 						'Content-Type': 'application/json'
@@ -56,14 +55,9 @@ class Campaign extends Component {
 					.then(res => res.json())
 					.then(data => {
 						console.log(data);
-						M.toast({ html: 'Asistencia cancelada' });
-						this.fetchTasks();
 					});
 			}
 		}
-
-		//.catch(err => console.error(err));
-		//e.preventDefault();
 	}
 
 	fetchCampanas() {
@@ -74,7 +68,6 @@ class Campaign extends Component {
 				console.log(this.state.campanas);
 			});
 	}
-
 
 	render() {
 		const campanas = this.state.campanas.map((campana, i) => {
@@ -96,7 +89,7 @@ class Campaign extends Component {
 								<p>
 									<label>
 										<Checkbox inline onChange={(e) =>
-											this.participar(e, campana._id, campana.organizador)}
+											this.participar(e, campana._id)}
 											disabled={this.state.disabled}>
 											Participar
 									    </Checkbox>
@@ -119,6 +112,5 @@ class Campaign extends Component {
 	}
 
 }
-
 
 export default Campaign;

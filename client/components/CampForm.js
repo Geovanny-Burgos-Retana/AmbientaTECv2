@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { HelpBlock, FormControl, ControlLabel, Button, FormGroup} from 'react-bootstrap';
 
-
 class CampForm extends Component {
 	constructor(props, context){
 		super(props, context);
