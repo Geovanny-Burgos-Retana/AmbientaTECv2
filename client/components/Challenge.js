@@ -9,24 +9,24 @@ class Challenge extends Component{
 		super(props, context);
 
 		this.state = {
+			aux: false,
 			userId: '',
 			challenges:[],
+			challengesAux:[],
 			retosParticipacion: [],
 			retosGanados:[],
 			show: false,
-			showW: false
+			showW: false,
+			flag: false,
+			flagWin: false
 		};
-
-		this.areDifferentByIds = this.areDifferentByIds.bind(this);
-		this.removeChallenge = this.removeChallenge.bind(this);
-		this.test = this.test.bind(this);
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 		this.handleShowWin = this.handleShowWin.bind(this);
 		this.handleCloseWin = this.handleCloseWin.bind(this);
 	}
 	handleShow() {
-		this.fetchChallengesP(this.state.userId);
+		this.fetchChallengesW(this.state.userId);
     	this.setState({ show: true });
 	}
 
@@ -43,27 +43,8 @@ class Challenge extends Component{
   	}
 	componentDidMount() {
 		const usuario=this.props.usuario;
-		//console.log(usuario._id);
-		this.fetchChallengesP(usuario._id);
-		this.fetchChallengesW(usuario._id);
-	    this.fetchChallenges();
-	    
-	}
-
-	fetchChallengesP(usuario) {
-		fetch(`/api/cuentas/unica/${usuario}`, {
-				method: 'GET',
-				headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-				}
-		}).then(res => res.json())
-		.then(data => {
-				this.setState({
-					userId: data._id,
-					retosParticipacion: data.retosParticipacion
-				}); 
-			})
+		this.fetchChallengesW(usuario._id);		
+		this.fetchChallenges();	    
 	}
 
 	fetchChallengesW(usuario) {
@@ -77,77 +58,36 @@ class Challenge extends Component{
 		.then(data => {
 				this.setState({
 					userId: data._id,
-					retosGanados: data.retosGanados
+					retosGanados: data.retosGanados,
+					retosParticipacion: data.retosParticipacion
 				}); 
 			})
-	}
 
-	areDifferentByIds(a, b) {
-		console.log(a);
-		console.log(b);
-	    var idsA = a.map( (x) => { return x._id; } ).sort();
-	    var idsB = b.map( (x) => { return x; } ).sort();
-	    return (idsA.join(',') === idsB.join(',') );
 	}
 
 	fetchChallenges() {
 	    fetch('/api/challenges')
-	      .then(res => res.json())
-	      .then(data => {
-	      	this.setState({challenges: data});				
-			});
-	      this.test();
-	        //this.setState({challenges: data});
-	        //console.log(this.state.challenges);
-	}
-
-	test() {
-		const lista = this.state.retosParticipacion;
-		lista.forEach(function(entry) {
-			var array = this.state.challenges; 
-	  		var index = array.indexOf(entry)
-	  		console.log(index)
-	  		array.splice(index, 1);
-	  		this.setState({challenges: array});
-			console.log(this.state.challenges)
-		});
-		
-	}
-
-
-	removeChallenge(retoP) {
-		console.log(this.state.challenges);
-		var array = this.state.challenges;
-		var index = array.indexOf(retoP);
-		console.log(index);
-		if(index >= 0){
-			console.log("IF if");
-			array.splice(index, 1);
-			this.setState({challenges: array});
-		}
+	    .then(res => res.json())
+	    .then(data => {
+	    	var retosQuitar = this.state.retosParticipacion.concat(this.state.retosGanados);
+	    	var result = [];
+			data.filter((retoAux, i) =>{
+				retosQuitar.filter((entry, i) =>{
+			  		if (retoAux._id === entry._id){
+						this.setState({flag: true});
+			  		}
+				});
+				if (this.state.flag){
+					this.setState({flag: false});
+				}else{
+					result.push(retoAux);
+				}
+			});	
+			this.setState({challenges: result});
+		})
 	}
 
 	render() {
-		const retosTodos = this.state.challenges.map((reto, i) =>{
-			return (
-				<div key={reto._id} style={{width: "80%"}} >
-					<PanelGroup accordion id="accordion-example">	
-						<Panel eventKey= {i} >
-					    	<Panel.Heading>
-					      		<Panel.Title toggle>{reto.challengeName}</Panel.Title>
-					    	</Panel.Heading>
-					    	<Panel.Body collapsible>
-					    		<p>Puntos al ganar el reto: {reto.points}</p>
-				          		<p>Descripción: {reto.description}</p>
-						      	<p>Fecha en que termina: {reto.endDate}</p>
-						      	<ChallengeModel newReto={reto} user={this.state.userId} />
-					    	</Panel.Body>
-					  	</Panel>
-					</PanelGroup>
-				</div>
-			)
-		});
-
 		const retosP = this.state.retosParticipacion.map((reto, i) =>{
 			return (
 				<div key={reto._id} style={{width: "80%"}} >
@@ -161,7 +101,7 @@ class Challenge extends Component{
 				          		<p>Descripción: {reto.description}</p>
 						      	<p>Fecha en que termina: {reto.endDate}</p>
 								<a href={"https://twitter.com/intent/tweet?button_hashtag=RetoCompletado_"+reto.challengeName+"&ref_src=twsrc%5Etfw"} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter"/>Tweet RetoCompletado_{reto.challengeName}</a>
-								<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+								<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
 						      	<ChallengeWin newReto={reto} user={this.state.userId} />
 					    	</Panel.Body>
 					  	</Panel>
@@ -188,6 +128,29 @@ class Challenge extends Component{
 			)
 		});
 
+		
+		
+
+		const retosTodos = this.state.challenges.map((reto, i) =>{
+
+			return (
+				<div key={reto._id} style={{width: "80%"}} >
+					<PanelGroup accordion id="accordion-example">	
+						<Panel eventKey= {i} >
+					    	<Panel.Heading>
+					      		<Panel.Title toggle>{reto.challengeName}</Panel.Title>
+					    	</Panel.Heading>
+					    	<Panel.Body collapsible>
+					    		<p>Puntos al ganar el reto: {reto.points}</p>
+				          		<p>Descripción: {reto.description}</p>
+						      	<p>Fecha en que termina: {reto.endDate}</p>
+						      	<ChallengeModel newReto={reto} allRetos={this.state.challenges} user={this.state.userId} />
+					    	</Panel.Body>
+					  	</Panel>
+					</PanelGroup>
+				</div>
+			)
+		});
 
 		return(
 
