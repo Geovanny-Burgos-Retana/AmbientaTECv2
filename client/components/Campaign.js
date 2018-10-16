@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {Button, Panel } from 'react-bootstrap';
 import CampParticipation from './CampParticipation';
+import {Panel, Button} from 'react-bootstrap';
+import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
 class Campaign extends Component {
 	constructor(props, context) {
@@ -17,7 +18,9 @@ class Campaign extends Component {
 			campanas: [],
 			habilitada: false,
 			hashtag: '',
-			showComponent: true
+			showComponent: true,
+			lat:'',
+			long: ''
 		};
 		this.hideCampaign = this.hideCampaign.bind(this);
 	}
@@ -60,6 +63,11 @@ class Campaign extends Component {
 
 
 	render() {
+		const style = {
+			height: "250px",
+			width:"250px",
+			overflow: "hidden"
+		};
 		const campanas = this.state.campanas.map((campana, i) => {
 			return (
 				<div key={campana._id} style={{ width: "80%" }} >
@@ -68,14 +76,25 @@ class Campaign extends Component {
 							<Panel.Title componentClass="h3">{campana.nombre}</Panel.Title>
 						</Panel.Heading>
 						<Panel.Body>
-							<p>{campana.description}</p>
-							<p>Direccion: {campana.direccion}</p>
-							<p>Organizador: {campana.organizador}</p>
-							<p>Fecha: {campana.fecha}</p>
-							<p>Telefono: {campana.telefono}</p>
-							<p>Email: {campana.email}</p>
-							<p>Hashtag: {campana.hashtag}</p>
-							<CampParticipation camp={campana} user={this.state.userId}/>
+							<div className="campana_content">
+								<p>{campana.description}</p>
+								<p>Direccion: {campana.direccion}</p>
+								<p>Organizador: {campana.organizador}</p>
+								<p>Fecha: {campana.fecha}</p>
+								<p>Telefono: {campana.telefono}</p>
+								<p>Email: {campana.email}</p>
+								<p>Hashtag: {campana.hashtag}</p>
+								<CampParticipation camp={campana} user={this.state.userId}/>
+							</div>
+							{campana.lat?
+							<div className="map2">
+								<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:campana.lat, lng:campana.long}}>
+									<Marker position={{lat:campana.lat, lng:campana.long}}/>
+								</Map>
+							</div>
+							:
+							<h4>Esta campaña no presenta mapa.</h4>
+							}
 						</Panel.Body>
 					</Panel>
 				</div>
@@ -94,4 +113,7 @@ class Campaign extends Component {
 }
 
 
-export default Campaign;
+
+export default GoogleApiWrapper({
+	apiKey: ("AIzaSyAAkugeeJzvEG8taA8Jq1-jhFHhd-Mlygw"),
+  })(Campaign)

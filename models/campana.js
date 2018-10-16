@@ -39,8 +39,22 @@ const CampanaSchema = new Schema({
     type: String,
     required: true
   },
-  contadorFb: { type: Number, required: true},
-  contadorTwitter: { type: Number, required: true}
+  contadorFb: { 
+    type: Number, 
+    required: true
+  },
+  contadorTwitter: { 
+    type: Number, 
+    required: true
+  },
+  lat: {
+    type: Number,
+    required: false
+  },
+  long: {
+    type: Number,
+    required: false
+  }
 });
 
 module.exports = Campana = mongoose.model('campana', CampanaSchema);

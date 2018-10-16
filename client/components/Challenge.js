@@ -41,15 +41,14 @@ class Challenge extends Component{
 	handleCloseWin() {
     	this.setState({ showW: false });
   	}
+
 	componentDidMount() {
 		const usuario=this.props.usuario;
-		console.log(usuario.score)
-		console.log("usuario")
 		this.setState({
 			score: usuario.score
 		})
 		this.fetchChallengesW(usuario._id);		
-		this.fetchChallenges();	    
+		//this.fetchChallenges();	    
 	}
 
 	fetchChallengesW(usuario) {
@@ -66,6 +65,7 @@ class Challenge extends Component{
 					retosGanados: data.retosGanados,
 					retosParticipacion: data.retosParticipacion
 				}); 
+				this.fetchChallenges();
 			})
 
 	}
@@ -164,10 +164,10 @@ class Challenge extends Component{
 		            	{retosTodos}
 		    	</div>	
 		    	<div className="col">
-			    	<Button bsStyle="success" bsSize="large" onClick={this.handleShow}>
+			    	<Button bsStyle="success" bsSize="large" onClick={this.handleShow} style={{margin: "0 20px 0 0"}}>
 							Ver Participaciones
 					</Button>
-			    	<Button bsStyle="success" bsSize="large"onClick={this.handleShowWin} >
+			    	<Button bsStyle="success" bsSize="large"onClick={this.handleShowWin}>
 						Ver Completados
 					</Button>
 				</div>
