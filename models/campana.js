@@ -38,7 +38,9 @@ const CampanaSchema = new Schema({
   hashtag: {
     type: String,
     required: true
-  }
+  },
+  contadorFb: { type: Number, required: true},
+  contadorTwitter: { type: Number, required: true}
 });
 
 module.exports = Campana = mongoose.model('campana', CampanaSchema);

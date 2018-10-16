@@ -14,9 +14,10 @@ class CampForm extends Component {
 			email:'',
 			descripcion: '',
 			habilitada: false,
-			hashtag: ''
+			hashtag: '',
+			contadorFb: 0,
+			contadorTwitter: 0
 		};
-		this.userId = '';
 		this.agregarCampana = this.agregarCampana.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
@@ -25,25 +26,6 @@ class CampForm extends Component {
 		var re = / /gi;
 		this.state.hashtag = "#AmbientaTEC_" + String(this.state.nombre).replace(re,"");
 		console.log(this.state);
-		const hash = ({
-			nombre: this.state.hashtag,
-			contadorFb: 0,
-			contadorTwitter: 0
-		});
-		fetch('/api/hashtags',{
-			method: 'POST',
-			body: JSON.stringify(hash),
-	        headers: {
-	          'Accept': 'application/json',
-	          'Content-Type': 'application/json'
-	        }
-		})
-		.then(res => res.json())
-		.then (data => {
-			console.log("data")
-		})
-		.catch(err => console.error(err));
-
 		fetch('/api/campanas',{
 			method: 'POST',
 			body: JSON.stringify(this.state),
@@ -63,7 +45,9 @@ class CampForm extends Component {
 				email:'',
 				descripcion: '',
 				habilitada: false,
-				hashtag: ''
+				hashtag: '',
+				contadorFb: 0,
+				contadorTwitter: 0
 			});
 		})
 		.catch(err => console.error(err));
@@ -71,7 +55,7 @@ class CampForm extends Component {
 	}
 
 	componentDidMount() {
-		this.userId = this.props.usuario.userID;
+		//const uId = this.props.usuario.userID;
 		this.setState({
 			organizador: this.props.usuario.name,
 			email: this.props.usuario.email
