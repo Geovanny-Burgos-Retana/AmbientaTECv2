@@ -15,6 +15,7 @@
     "concurrently": "^4.0.1",
     "express": "^4.16.3",
     "firebase": "^5.4.2",
+    "google-maps-react": "^2.0.2",
     "mongoose": "^5.2.12",
     "react-bootstrap": "^0.32.4",
     "react-native": "^0.56.1",

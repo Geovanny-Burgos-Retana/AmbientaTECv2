@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Panel, Button, Checkbox } from 'react-bootstrap';
+import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
 class Campaign extends Component {
 	constructor() {
@@ -14,7 +15,9 @@ class Campaign extends Component {
 			descripcion: '',
 			campanas: [],
 			habilitada: false,
-			hashtag: ''
+			hashtag: '',
+			lat:'',
+			long: ''
 		};
 		this.participar = this.participar.bind(this);
 	}
@@ -77,6 +80,11 @@ class Campaign extends Component {
 
 
 	render() {
+		const style = {
+			height: "250px",
+			width:"250px",
+			overflow: "hidden"
+		};
 		const campanas = this.state.campanas.map((campana, i) => {
 			return (
 				<div key={campana._id} style={{ width: "80%" }} >
@@ -85,6 +93,7 @@ class Campaign extends Component {
 							<Panel.Title componentClass="h3">{campana.nombre}</Panel.Title>
 						</Panel.Heading>
 						<Panel.Body>
+							<div className="campana_content">
 							<p>{campana.description}</p>
 							<p>Direccion: {campana.direccion}</p>
 							<p>Organizador: {campana.organizador}</p>
@@ -103,6 +112,16 @@ class Campaign extends Component {
 									</label>
 								</p>
 							</form>
+							</div>
+							{campana.lat?
+							<div className="map2">
+								<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:campana.lat, lng:campana.long}}>
+									<Marker position={{lat:campana.lat, lng:campana.long}}/>
+								</Map>
+							</div>
+							:
+							<h4>Esta campaña no presenta mapa.</h4>
+							}
 						</Panel.Body>
 					</Panel>
 				</div>
@@ -121,4 +140,7 @@ class Campaign extends Component {
 }
 
 
-export default Campaign;
+
+export default GoogleApiWrapper({
+	apiKey: ("AIzaSyAAkugeeJzvEG8taA8Jq1-jhFHhd-Mlygw"),
+  })(Campaign)

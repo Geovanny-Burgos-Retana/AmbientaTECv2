@@ -38,7 +38,16 @@ const CampanaSchema = new Schema({
   hashtag: {
     type: String,
     required: true
-  }
+  },
+  lat: {
+    type: Number,
+    required: false
+  },
+  long: {
+    type: Number,
+    required: false
+  },
+
 });
 
 module.exports = Campana = mongoose.model('campana', CampanaSchema);
