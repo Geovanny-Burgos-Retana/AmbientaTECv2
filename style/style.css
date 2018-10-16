@@ -139,6 +139,27 @@ body {
     font-size: 1vw;
     color:  #393E46;
 }
+.campana_content{
+    width: 50%;
+    height:auto;
+    margin: auto;
+    vertical-align: auto;
+    display: inline-block;
+}
+.map {
+    height: 400px;
+    width: 400px;
+}
+
+.map2{
+    height: 250px;
+    width: 50%;
+    display: inline-block;
+}
+
+Map{
+    height: 100%;
+}
 
 .label1{
     color: #417B64;
