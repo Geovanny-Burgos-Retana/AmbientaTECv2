@@ -25,6 +25,25 @@ class CampForm extends Component {
 		var re = / /gi;
 		this.state.hashtag = "#AmbientaTEC_" + String(this.state.nombre).replace(re,"");
 		console.log(this.state);
+		const hash = ({
+			nombre: this.state.hashtag,
+			contadorFb: 0,
+			contadorTwitter: 0
+		});
+		fetch('/api/hashtags',{
+			method: 'POST',
+			body: JSON.stringify(hash),
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        }
+		})
+		.then(res => res.json())
+		.then (data => {
+			console.log(data)
+		})
+		.catch(err => console.error(err));
+
 		fetch('/api/campanas',{
 			method: 'POST',
 			body: JSON.stringify(this.state),

@@ -14,6 +14,7 @@ router.post('/', async (req, res) => {
         provider: req.body.provider,
         userID: req.body.userID,
         name: req.body.name,
+        score: 0,
         email: req.body.email,
         retosParticipacion: req.body.retosParticipacion,
         retosGanados: req.body.retosGanados,
@@ -34,6 +35,13 @@ router.put('/:id', function(req, res, next) {
 router.put('/ganar/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
     {$push: {retosGanados: req.body.reto}},
+    {safe: true, upsert: true})
+    .then(cuenta => res.json(cuenta))
+    .catch(err => res.status(404).json({ success: false }));
+});
+router.put('/score/:id', function(req, res, next) {
+    Cuenta.findByIdAndUpdate(req.params.id,
+    {$set: {score: req.body.score}},
     {safe: true, upsert: true})
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
@@ -71,14 +79,14 @@ router.get('/unica/:id', async (req, res) => {
 });
   
 // Agregar campaña al arreglo  de identificadores de campañas
-router.put('/addCampania/:_id', async (req, res) => {
-    if( req.body.campania != null ){
-        await Cuenta.updateOne( { _id: mongoose.Types.ObjectId(req.params._id) }, { $push: { campanias: { $each: [ req.body.campania ] }, } } );
-        res.json({ status: 'Campaña agregada de lista' });
-    }else{
-        res.json({ status: 'Campo campania no contemplado en el json' });
-    }    
+router.put('/addCampania/:id', function(req, res, next) {
+    Cuenta.findByIdAndUpdate(req.params.id,
+    {$push: {campanias: req.body.campania}},
+    {safe: true, upsert: true})
+    .then(cuenta => res.json(cuenta))
+    .catch(err => res.status(404).json({ success: false }));
 });
+
 
 // Eliminar campaña al arreglo de identificadores de campañas
 router.put('/delCampania/:_id', async (req, res) => {

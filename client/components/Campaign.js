@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Panel, Button, Checkbox } from 'react-bootstrap';
+import {Button, Panel } from 'react-bootstrap';
+import CampParticipation from './CampParticipation';
 
 class Campaign extends Component {
-	constructor() {
-		super();
+	constructor(props, context) {
+		super(props, context);
 		this.state = {
+			userId:'',
 			nombre: '',
 			direccion: '',
 			organizador: '',
@@ -14,64 +16,45 @@ class Campaign extends Component {
 			descripcion: '',
 			campanas: [],
 			habilitada: false,
-			hashtag: ''
+			hashtag: '',
+			showComponent: true
 		};
-		this.participar = this.participar.bind(this);
+		this.hideCampaign = this.hideCampaign.bind(this);
+	}
+
+	hideCampaign(){
+		this.setState({
+			showComponent:false
+		})
 	}
 	componentDidMount() {
+		const usuario=this.props.usuario;
+		this.setState({
+			userId: usuario._id,
+			campsActuales: usuario.campanias
+		});
 		this.fetchCampanas();
-	}
-
-	participar(event, idCampana, idUser) {
-		console.log('Checkbox checked:', (event.target.checked));
-		console.log('Campana:', idCampana);
-		if (event.target.checked) {
-			console.log('Entra IF');
-			fetch('api/participantes', {
-				method: 'POST',
-				body: JSON.stringify({
-					organizador: idUser,
-					idCamp: idCampana
-				}),
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				}
-			})
-				.then(res => res.json())
-				.then(data => {
-					M.toast({ html: 'Se espera su participacion.' });
-				})
-				.catch(err => console.error(err));
-		} else {
-			console.log('ELSE');
-			if (confirm('Quieres cancelar la asistencia?')) {
-				fetch(`/api/participantes/${idUser}`, {
-					method: 'DELETE',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					}
-				})
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						M.toast({ html: 'Asistencia cancelada' });
-						this.fetchTasks();
-					});
-			}
-		}
-
-		//.catch(err => console.error(err));
-		//e.preventDefault();
 	}
 
 	fetchCampanas() {
 		fetch('/api/campanas')
 			.then(res => res.json())
 			.then(data => {
-				this.setState({ campanas: data });
-				console.log(this.state.campanas);
+				var campsParticipando = this.state.campsActuales;
+		    	var result = [];
+				data.filter((camp, i) =>{
+					campsParticipando.filter((entry, i) =>{
+				  		if (camp._id === entry._id){
+							this.setState({flag: true});
+				  		}
+					});
+					if (this.state.flag){
+						this.setState({flag: false});
+					}else{
+						result.push(camp);
+					}
+				});	
+				this.setState({ campanas: result });
 			});
 	}
 
@@ -92,17 +75,7 @@ class Campaign extends Component {
 							<p>Telefono: {campana.telefono}</p>
 							<p>Email: {campana.email}</p>
 							<p>Hashtag: {campana.hashtag}</p>
-							<form>
-								<p>
-									<label>
-										<Checkbox inline onChange={(e) =>
-											this.participar(e, campana._id, campana.organizador)}
-											disabled={this.state.disabled}>
-											Participar
-									    </Checkbox>
-									</label>
-								</p>
-							</form>
+							<CampParticipation camp={campana} user={this.state.userId}/>
 						</Panel.Body>
 					</Panel>
 				</div>

@@ -11,6 +11,10 @@ const CuentaSchema = new Schema({
     type: String,
     required: true
   },
+  score: {
+    type: Number,
+    required: true
+  },
   name: {
     type: String,
     required: true
@@ -39,7 +43,18 @@ const CuentaSchema = new Schema({
     type: Array,
     required:false
   },
-  campanias:[String]
+  campanias:[{
+    _id:  Schema.ObjectId,
+    nombre:String,
+    direccion: String,
+    organizador: String,
+    fecha: Date,
+    telefono: Number,
+    email: String,
+    descripcion: String,
+    habilitada: Boolean,
+    hashtag: String
+  }]
 });
 
 module.exports = Cuenta = mongoose.model('cuenta', CuentaSchema);

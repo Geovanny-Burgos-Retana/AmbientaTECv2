@@ -33,12 +33,14 @@ class App extends Component{
 				isLoggedIn: false,
 				provider: "",
 				userID: "",
+				score: 0,
 				name: "",
 				email: "",
 				picture: "",
 				contador: 0,
 				retosParticipacion: [],
 				retosGanados: [],
+				campanias: [],
 				tips:[],
 				recomendaciones:[],
 				tipActual:[],
@@ -92,12 +94,14 @@ class App extends Component{
 						this.setState({
 								_id: data._id,
 								isLoggedIn: true,
+								score: data.score,
 								provider: data.provider,
 								userID: data.uid,
 								name: data.name,
 								email: data.email,
 								picture: user.photoURL,
 								retosParticipacion: data.retosParticipacion,
+								campanias: data.campanias,
 								contador:0
 						}); 
 
@@ -112,6 +116,7 @@ class App extends Component{
 								email: user.email,
 								retosParticipacion: [],
 								retosGanados:[],
+								campanias: [],
 								contador:0
 						});
 						fetch('/api/cuentas', {
@@ -125,6 +130,7 @@ class App extends Component{
 						.catch(err => console.error("ERROR al registrar el usuasrio: "+err))
 						this.setState({
 								isLoggedIn: true,
+								score: 0,
 								provider: user.providerId,
 								userID: user.uid,
 								name: user.displayName,
@@ -132,6 +138,7 @@ class App extends Component{
 								picture: user.photoURL,
 								retosParticipacion: [],
 								retosGanados:[],
+								campanias: [],
 								contador:0
 						}); 
 						return false;
@@ -355,7 +362,7 @@ class App extends Component{
 						</div>
 
 						<h5>Puede participar en cualquiera de las siguientes campañas, solo marquela con un check.</h5>			    
-						<Campaign usuario={this.state}/>
+						<Campaign usuario={this.state} />
 
 						<div className= "title-separator">
 							<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos"/></a>

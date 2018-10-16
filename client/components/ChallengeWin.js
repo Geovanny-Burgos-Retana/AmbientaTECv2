@@ -7,7 +7,8 @@ class ChallengeWin extends Component{
 		this.state = {
 			reto: '',
 			userId: '',
-			show: false
+			show: false,
+			score: 0
 		};
 		this.ganarReto = this.ganarReto.bind(this);
 	}
@@ -15,13 +16,31 @@ class ChallengeWin extends Component{
 	componentDidMount() {
 		const newReto=this.props.newReto;
 		const user = this.props.user;
+		const puntuacion =  this.props.puntos;
 		this.setState({
 			reto: newReto,
-			userId: user
+			userId: user,
+			score: puntuacion+newReto.points
 		})
 	}
 
 	ganarReto(){
+		fetch(`/api/cuentas/score/${this.props.user}`, {
+			method: 'PUT',
+					body: JSON.stringify({
+						score: this.state.score
+					}),
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        }
+		})
+		.then(res => res.json())
+		.then (data => {
+			console.log(data)
+		})
+		.catch(err => console.error(err));
+
 		fetch(`/api/cuentas/ganar/${this.props.user}`, {
 			method: 'PUT',
 					body: JSON.stringify({
@@ -53,7 +72,6 @@ class ChallengeWin extends Component{
 			console.log(data)
 		})
 		.catch(err => console.error(err));
-		console.log("data")
 		this.setState({show: true});
 	}
 
