@@ -20,6 +20,7 @@ class CampParticipation extends Component{
 			campania: camp
 		});
 	}
+	
 	participar() {
 		fetch(`api/cuentas/addCampania/${this.props.user}`, {
 			method: 'PUT',

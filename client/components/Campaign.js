@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
-import {Panel, Button} from 'react-bootstrap';
+import {Panel, Button, Modal, PanelGroup} from 'react-bootstrap';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
 class Campaign extends Component {
@@ -16,15 +16,27 @@ class Campaign extends Component {
 			email: '',
 			descripcion: '',
 			campanas: [],
+			campsActuales:[],
 			habilitada: false,
 			hashtag: '',
 			showComponent: true,
 			lat:'',
-			long: ''
+			long: '',
+			show: false
 		};
+		this.handleShow = this.handleShow.bind(this);
+		this.handleClose = this.handleClose.bind(this);
 		this.hideCampaign = this.hideCampaign.bind(this);
 	}
 
+	handleShow() {
+		//this.fetchChallengesW(this.state.userId);
+    	this.setState({ show: true });
+	}
+
+	handleClose() {
+    	this.setState({ show: false });
+  	}
 	hideCampaign(){
 		this.setState({
 			showComponent:false
@@ -32,6 +44,7 @@ class Campaign extends Component {
 	}
 	componentDidMount() {
 		const usuario=this.props.usuario;
+		console.log(usuario.campanias)
 		this.setState({
 			userId: usuario._id,
 			campsActuales: usuario.campanias
@@ -68,7 +81,9 @@ class Campaign extends Component {
 			width:"250px",
 			overflow: "hidden"
 		};
+
 		const campanas = this.state.campanas.map((campana, i) => {
+			console.log("campana")
 			return (
 				<div key={campana._id} style={{ width: "80%" }} >
 					<Panel bsStyle="success">
@@ -100,11 +115,63 @@ class Campaign extends Component {
 				</div>
 			)
 		});
-		return (
 
+		const campaniasP = this.state.campsActuales.map((camp, i) =>{
+			return (
+				<div key={camp._id} style={{width: "80%"}} >
+					<PanelGroup accordion id="CampParticipation">	
+						<Panel eventKey= {i} >
+					    	<Panel.Heading>
+					      		<Panel.Title toggle>{camp.nombre}</Panel.Title>
+					    	</Panel.Heading>
+					    	<Panel.Body collapsible>
+								<p>{camp.description}</p>
+								<p>Direccion: {camp.direccion}</p>
+								<p>Organizador: {camp.organizador}</p>
+								<p>Fecha: {camp.fecha}</p>
+								<p>Telefono: {camp.telefono}</p>
+								<p>Email: {camp.email}</p>
+								<p>Hashtag: {camp.hashtag}</p>
+								<a href={"https://twitter.com/intent/tweet?button_hashtag=AmbientaTEC_"+camp.nombre+"&ref_src=twsrc%5Etfw"} onClick={this.handleClose} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter"/>Tweet AmbientaTEC_{camp.nombre}</a>
+								<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
+								{camp.lat?
+								<div className="map2">
+									<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:camp.lat, lng:camp.long}}>
+										<Marker position={{lat:camp.lat, lng:camp.long}}/>
+									</Map>
+								</div>
+								:
+								<h4>Esta campaña no presenta mapa.</h4>
+								}
+					    	</Panel.Body>
+					  	</Panel>
+					</PanelGroup>
+				</div>
+			)
+		});
+
+		return (
 			<div className="container">
 				<div className="row">
 					{campanas}
+				</div>
+				<div className="col">
+			    	<Button bsStyle="success" bsSize="large" onClick={this.handleShow} style={{margin: "20px"}}>
+							Ver Participaciones
+					</Button>
+				</div>
+				<div className= "modal">
+					<Modal show={this.state.show} onHide={this.handleClose}>
+						<Modal.Header closeButton>
+							<Modal.Title>Campañas en participación.</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							{campaniasP}
+						</Modal.Body>
+						<Modal.Footer>
+							<Button onClick={this.handleClose}>Close</Button>
+						</Modal.Footer>
+					</Modal>
 				</div>
 			</div>
 		)

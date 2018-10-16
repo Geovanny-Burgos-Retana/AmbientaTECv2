@@ -53,7 +53,11 @@ const CuentaSchema = new Schema({
     email: String,
     descripcion: String,
     habilitada: Boolean,
-    hashtag: String
+    hashtag: String,
+    contadorFb: Number, 
+  contadorTwitter: Number, 
+    lat: Number,
+    long: Number
   }]
 });
 
