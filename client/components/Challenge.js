@@ -105,8 +105,6 @@ class Challenge extends Component{
 					    		<p>Puntos al ganar el reto: {reto.points}</p>
 				          		<p>Descripción: {reto.description}</p>
 						      	<p>Fecha en que termina: {reto.endDate}</p>
-								<a href={"https://twitter.com/intent/tweet?button_hashtag=RetoCompletado_"+reto.challengeName+"&ref_src=twsrc%5Etfw"} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter"/>Tweet RetoCompletado_{reto.challengeName}</a>
-								<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
 						      	<ChallengeWin newReto={reto} user={this.state.userId} puntos={this.state.score}  />
 					    	</Panel.Body>
 					  	</Panel>

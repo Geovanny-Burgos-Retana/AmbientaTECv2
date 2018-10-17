@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
 import TwitterButton from './TwitterButton';
+<<<<<<< HEAD
 import {Panel, Button, Modal, PanelGroup,FormGroup,Radio} from 'react-bootstrap';
+=======
+import CampNoParti from './CampNoParti';
+import {Panel, Button, Modal, PanelGroup} from 'react-bootstrap';
+>>>>>>> 506d4cb23e2a49e4dbb44e97073cbaab0cc94e65
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 import {XYPlot, XAxis, YAxis, VerticalGridLines, HorizontalGridLines, LineSeries} from 'react-vis';
 import "../../node_modules/react-vis/dist/style.css";
@@ -34,9 +39,13 @@ class Campaign extends Component {
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+<<<<<<< HEAD
 		this.hideCampaign = this.hideCampaign.bind(this);
 		this.changeChartFB = this.changeChartFB.bind(this);
 		this.changeChartTW = this.changeChartTW.bind(this);
+=======
+		
+>>>>>>> 506d4cb23e2a49e4dbb44e97073cbaab0cc94e65
 	}
 	//Para mostrar el MODAL con las campañas en participacion
 	handleShow() {
@@ -45,13 +54,11 @@ class Campaign extends Component {
 	}
 	//Para ocultar el MODAL de las campañas en participacion
 	handleClose() {
+		this.fetchCampaniasW(this.state.userId);
     	this.setState({ show: false });
   	}
-	hideCampaign(){
-		this.setState({
-			showComponent:false
-		})
-	}
+
+
 	//Paso valores que recive el componente
 	componentDidMount() {
 		const usuario=this.props.usuario;
@@ -178,6 +185,7 @@ class Campaign extends Component {
 					      		<Panel.Title toggle>{camp.nombre}</Panel.Title>
 					    	</Panel.Heading>
 					    	<Panel.Body collapsible>
+					    		{this.state.show  && <CampNoParti campania={camp} user={this.state.userId} handleCloseModal={this.handleClose} />}
 								<p>{camp.description}</p>
 								<p>Direccion: {camp.direccion}</p>
 								<p>Organizador: {camp.organizador}</p>
@@ -195,6 +203,7 @@ class Campaign extends Component {
 								:
 								<h4>Esta campaña no presenta mapa.</h4>
 								}
+
 					    	</Panel.Body>
 					  	</Panel>
 					</PanelGroup>

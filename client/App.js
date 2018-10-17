@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Navigation from './components/Navigation';
-import {Carousel, Modal, Button, Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import {Carousel, Modal, Button, Navbar, Nav, NavItem, NavDropdown, MenuItem, Panel} from 'react-bootstrap';
 import { auth, providerTwitter, providerFacebook } from '../firebase.js';
 import { HelpBlock, FormControl, ControlLabel, FormGroup} from 'react-bootstrap';
 import  '../style/style.css';
@@ -19,12 +19,13 @@ class App extends Component{
 		super(props, context);
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this.handleShowLogros = this.handleShowLogros.bind(this);
+		this.handleCloseLogros = this.handleCloseLogros.bind(this);
 		this.loginTwitter = this.loginTwitter.bind(this); // <-- add this line
 		this.loginFacebook = this.loginFacebook.bind(this); // <-- add this line
 		this.logout = this.logout.bind(this); // <-- add this line
 		this.insert = this.insert.bind(this);
 		this.userExist = this.userExist.bind(this);
-		this.escogerTip = this.escogerTip.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 
 		this.state = {
@@ -45,14 +46,23 @@ class App extends Component{
 				recomendaciones:[],
 				tipActual:[],
 				Hashtag1: 'fun',
+<<<<<<< HEAD
 				Hashtag2: 'trash'
 
+=======
+				Hashtag2: 'trash',
+				showLogros: false,
+				logros: []
+>>>>>>> 506d4cb23e2a49e4dbb44e97073cbaab0cc94e65
 		};
   	}
 
   	handleClose() {
     	this.setState({ show: false });
 	  }
+	handleCloseLogros() {
+    	this.setState({ showLogros: false });
+	}
 	  
 	handleChange(e){
 		const {name, value} = e.target;
@@ -65,11 +75,24 @@ class App extends Component{
     	this.setState({ show: true });
 	}
 
+  	handleShowLogros() {
+    	this.setState({ showLogros: true });
+	}
 	fetchTips() {
 	    fetch('/api/tips')
 	      .then(res => res.json())
 	      .then(data => {
 	        this.setState({tips: data});
+	        
+	      });
+	}
+
+
+	fetchLogros() {
+	    fetch('/api/logros')
+	      .then(res => res.json())
+	      .then(data => {
+	        this.setState({logros: data});
 	        
 	      });
 	}
@@ -167,6 +190,7 @@ class App extends Component{
 			});
 			this.fetchTips();
 			this.fetchRecomendaciones();
+			this.fetchLogros();
 	}
 
 	logout() {
@@ -197,38 +221,8 @@ class App extends Component{
 			});
 	}
 
-	escogerTip(){
-    	if(this.state.contador <= this.state.tips.length()){
-    		this.setState({
-				contador: this.state.contador +1,
-				tipActual: this.state.tips.map((tip, i) =>{
-					console.log(this.state.tips.length)
-					if (i === this.state.contador){
-						console.log("Dentro IFFF");
-						return (
-							<div key={tip._id} style={{width: "80%"}} >	
-								<p>{tip.nombre}</p>
-								<img className="element-img" src={tip.foto} alt="Info"/>
-								<p>{tip.descripcion}</p>
-
-							</div>
-						)
-					}
-				})
-			});
-    	}else{
-    		this.setState({
-    			contador: 0
-    		})
-    	}
-		
-
-		
-	}
-
 	render() {
 		const tips = this.state.tips.map((tip, i) =>{
-
 			return (
 		  		<Carousel.Item key={tip._id}>
 		    		<img width={900} height={500} alt="900x500" src={tip.foto} />
@@ -238,6 +232,26 @@ class App extends Component{
 		    		</Carousel.Caption>
 		  		</Carousel.Item>				
 			)
+		});
+
+		const logros = this.state.logros.map((logro, i) => {
+			if (logro.score <= this.state.score){
+				return (
+					<div key={logro._id} style={{ width: "80%" }} >
+						<Panel bsStyle="success">
+							<Panel.Heading>
+								<Panel.Title componentClass="h3">{logro.nombre}</Panel.Title>
+							</Panel.Heading>
+							<Panel.Body>
+								<div className="logro_content">
+									<img width={100} height={100} alt="200x100" src={logro.img} />
+								</div>
+							</Panel.Body>
+						</Panel>
+					</div>
+				)
+			}
+
 		});
 
 		const recomendaciones = this.state.recomendaciones.map((tip, i) =>{
@@ -258,9 +272,10 @@ class App extends Component{
             	{this.state.isLoggedIn ?
                 <div className="user-logged">	
                     <img src={this.state.picture} alt={this.state.name} />
-                    <p>Estás logueado con {this.state.provider}</p>
                     <p>Bienvenido {this.state.name}</p>
-                 <p><strong>Email:</strong> {this.state.email} </p>
+                 	<p><strong>Email:</strong> {this.state.email} </p>
+                 	<p><strong>Score:</strong> {this.state.score}</p>
+                 	<button onClick={this.handleShowLogros}>Ver Logros</button>
                     <button onClick={this.logout}>LOG OUT</button>
                 </div>   
                 :
@@ -273,6 +288,21 @@ class App extends Component{
                     </button>
                 </div>         
             	}
+
+            	<div className= "container">
+					<Modal show={this.state.showLogros} onHide={this.handleCloseLogros} style={{maxHeight:"100%"}}>
+						<Modal.Header closeButton>
+							<Modal.Title>Logros</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							{logros}
+						</Modal.Body>
+						<Modal.Footer>
+							<Button onClick={this.handleCloseLogros}>Close</Button>
+						</Modal.Footer>
+					</Modal>
+				</div>
+
 				<img className="img-portada" src="https://noticias.utpl.edu.ec/sites/default/files/imagenes_editor/gestion_ambiental-02.jpg" alt="Portada" />
 				<Navbar id="navver" inverse collapseOnSelect >
 					<Navbar.Header>

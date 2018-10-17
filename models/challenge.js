@@ -22,6 +22,18 @@ const ChallengeSchema = new Schema({
   description: {
     type: String,
     required: true
+  },
+  hashtag: {
+    type: String,
+    required: true
+  },
+  contadorFb: { 
+    type: Number, 
+    required: true
+  },
+  contadorTwitter: { 
+    type: Number, 
+    required: true
   }
 });
 

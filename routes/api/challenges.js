@@ -18,6 +18,15 @@ router.get('/:id', async (req, res) => {
     .catch(err => res.status(404).json({ success: false }));
 });
 
+// aumentar contador de twitter de un reto
+router.put('/twitter/:id', function(req, res, next) {
+    Challenge.findByIdAndUpdate(req.params.id,
+    {$inc: {contadorTwitter: 1}},
+    {safe: true, upsert: true})
+    .then(challenge => res.json(challenge))
+    .catch(err => res.status(404).json({ success: false }));
+});
+
 // @route   POST api/challenges
 // @desc    Create a challenge
 // @access  Public
@@ -27,7 +36,10 @@ router.post('/', (req, res) => {
 		points: req.body.points,
 		endDate: req.body.endDate,
 		time: req.body.time,
-		description: req.body.description
+		description: req.body.description,
+		hashtag: req.body.hashtag,
+		contadorFb: req.body.contadorFb,
+		contadorTwitter: req.body.contadorTwitter
 	});
 
 	newChallenge.save().then(challenge => res.json(challenge));
