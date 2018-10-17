@@ -16,7 +16,7 @@ class TwitterButton extends Component{
 			campania: camp
 		});
 	}
-	
+	//Aumenta el contador de # en twitter en 1 solo en camppa;as
 	contadorTwitter(){
 		fetch(`/api/campanas/twitterCont/${this.props.camp._id}`, {
 			method: 'PUT',

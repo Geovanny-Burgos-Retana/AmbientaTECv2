@@ -29,7 +29,8 @@ const CuentaSchema = new Schema({
     points: Number,
     endDate: Date,
     time: Number,
-    description: String
+    description: String,
+    hashtag: String
   }],
   retosGanados:[{
     _id:  Schema.ObjectId,
@@ -37,7 +38,8 @@ const CuentaSchema = new Schema({
     points: Number,
     endDate: Date,
     time: Number,
-    description: String
+    description: String,
+    hashtag: String
   }],
   retosPerdidos:{
     type: Array,
