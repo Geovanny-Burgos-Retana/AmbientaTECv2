@@ -88,6 +88,12 @@ router.put('/addCampania/:id', function(req, res, next) {
 });
 
 
+
+
+
+
+
+
 // Eliminar campaña al arreglo de identificadores de campañas
 router.put('/delCampania/:_id', async (req, res) => {
     if( req.body.campania != null){

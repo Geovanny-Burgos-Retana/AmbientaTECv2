@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
+import TwitterButton from './TwitterButton';
 import {Panel, Button, Modal, PanelGroup} from 'react-bootstrap';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
@@ -26,14 +27,15 @@ class Campaign extends Component {
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		this.hideCampaign = this.hideCampaign.bind(this);
+		this.handleShow = this.handleShow.bind(this);
+		
 	}
-
+	//Para mostrar el MODAL con las campañas en participacion
 	handleShow() {
 		//this.fetchChallengesW(this.state.userId);
     	this.setState({ show: true });
 	}
-
+	//Para ocultar el MODAL de las campañas en participacion
 	handleClose() {
     	this.setState({ show: false });
   	}
@@ -42,16 +44,16 @@ class Campaign extends Component {
 			showComponent:false
 		})
 	}
+	//Paso valores que recive el componente
 	componentDidMount() {
 		const usuario=this.props.usuario;
-		console.log(usuario.campanias)
 		this.setState({
 			userId: usuario._id,
 			campsActuales: usuario.campanias
 		});
 		this.fetchCampanas();
 	}
-
+	//Muestro las campañas que NO estan en participacion 
 	fetchCampanas() {
 		fetch('/api/campanas')
 			.then(res => res.json())
@@ -83,7 +85,6 @@ class Campaign extends Component {
 		};
 
 		const campanas = this.state.campanas.map((campana, i) => {
-			console.log("campana")
 			return (
 				<div key={campana._id} style={{ width: "80%" }} >
 					<Panel bsStyle="success">
@@ -132,8 +133,7 @@ class Campaign extends Component {
 								<p>Telefono: {camp.telefono}</p>
 								<p>Email: {camp.email}</p>
 								<p>Hashtag: {camp.hashtag}</p>
-								<a href={"https://twitter.com/intent/tweet?button_hashtag=AmbientaTEC_"+camp.nombre+"&ref_src=twsrc%5Etfw"} onClick={this.handleClose} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter"/>Tweet AmbientaTEC_{camp.nombre}</a>
-								<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
+								<TwitterButton camp={camp} user={this.state.userId}/>
 								{camp.lat?
 								<div className="map2">
 									<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:camp.lat, lng:camp.long}}>
@@ -160,6 +160,7 @@ class Campaign extends Component {
 							Ver Participaciones
 					</Button>
 				</div>
+
 				<div className= "modal">
 					<Modal show={this.state.show} onHide={this.handleClose}>
 						<Modal.Header closeButton>

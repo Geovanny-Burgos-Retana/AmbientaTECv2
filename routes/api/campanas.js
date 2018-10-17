@@ -13,6 +13,15 @@ router.get('/', async (req, res) => {
     res.json(campanas);
 });
 
+// aumentar contador de twitter de una campaña
+router.put('/twitterCont/:id', function(req, res, next) {
+    Campana.findByIdAndUpdate(req.params.id,
+    {$inc: {contadorTwitter: 1}},
+    {safe: true, upsert: true})
+    .then(campana => res.json(campana))
+    .catch(err => res.status(404).json({ success: false }));
+});
+
 // @route   POST api/campanas
 // @desc    Create a campana
 // @access  Public

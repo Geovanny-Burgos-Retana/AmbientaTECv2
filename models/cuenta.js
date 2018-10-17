@@ -55,7 +55,7 @@ const CuentaSchema = new Schema({
     habilitada: Boolean,
     hashtag: String,
     contadorFb: Number, 
-  contadorTwitter: Number, 
+    contadorTwitter: Number, 
     lat: Number,
     long: Number
   }]
