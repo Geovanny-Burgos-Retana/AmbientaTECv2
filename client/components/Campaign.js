@@ -5,25 +5,17 @@ class Campaign extends Component {
 	constructor() {
 		super();
 		this.state = {
-			nombre: '',
-			direccion: '',
-			organizador: '',
-			fecha: '',
-			telefono: '',
-			email: '',
-			descripcion: '',
 			campanas: [],
-			habilitada: false,
-			hashtag: ''
+			camps_participando: []
 		};
-		this.participar = this.participar.bind(this);
-	}
-	componentDidMount() {
-		this.fetchCampanas();
-		console.log(this.props);
+		this.participacion = this.cambiar_participacion.bind(this);
 	}
 
-	participar(event, idCampana) {
+	componentDidMount() {
+		this.fetchCampanas();
+	}
+
+	cambiar_participacion(event, idCampana) {
 		if (event.target.checked) {
 			fetch(`api/cuentas/addCampania/${this.props.usuario._id}`, {
 				method: 'PUT',
@@ -67,6 +59,12 @@ class Campaign extends Component {
 				this.setState({ campanas: data });
 				console.log(this.state.campanas);
 			});
+		fetch(`api/cuentas/getCampanias/${this.props.usuario._id}`)
+			.then(res => res.json())
+			.then(data => {
+				this.setState({ camps_participando: data });
+				console.log(this.state.camps_participando);
+			});
 	}
 
 	render() {
@@ -88,10 +86,10 @@ class Campaign extends Component {
 							<form>
 								<p>
 									<label>
-										<Checkbox inline onChange={(e) =>
-											this.participar(e, campana._id)}
+										<Checkbox inline
+											onChange={(e) => this.cambiar_participacion(e, campana._id)}
 											disabled={this.state.disabled}>
-											Participar
+											Participación en campaña
 									    </Checkbox>
 									</label>
 								</p>
@@ -110,7 +108,6 @@ class Campaign extends Component {
 			</div>
 		)
 	}
-
 }
 
 export default Campaign;

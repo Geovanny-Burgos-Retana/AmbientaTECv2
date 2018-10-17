@@ -1,41 +1,57 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 // Empresa Model
 const Empresa = require('../../models/empresa');
 
-// @route   GET api/empresas
-// @desc    Get All empresas
-// @access  Public
-router.get('/', (req, res) => {
-	Empresa.find()
-    //.sort({ date: -1 })
-    .then(empresas => res.json(empresas));
+// Obtener datos de las empresas
+router.get('/', async (req, res) => {
+	const empresas = await Empresa.find({ 'habilitada': true }, { _id: 1, nombre: 1, direccion: 1, horario_apertura: 1, horario_cierre: 1, telefono: 1, email: 1, creador: 1 });
+	res.json(empresas);
 });
 
-// @route   POST api/empresas
-// @desc    Create a empresa
-// @access  Public
-router.post('/', (req, res) => {
-	const newEmpresa = new Empresa({
+// Actualizar empresa
+router.put('/:id', async (req, res) => {	
+	const { nombre, direccion, horario_apertura, horario_cierre, telefono, email, creador, habilitada, productos } = req.body;
+	const updateBusiness = { nombre, direccion, horario_apertura, horario_cierre, telefono, email, creador, habilitada, productos };
+	console.log(updateBusiness);
+	await Empresa.findByIdAndUpdate(req.params.id, updateBusiness);
+	res.json({ status: "Empresa actualizada" });
+});
+
+// Obtener productos de una empresa
+router.get('/productos/:_id', async (req, res) => {
+	const productos = await Empresa.findOne({ _id: mongoose.Types.ObjectId(req.params._id) }, { _id: 0, productos: 1 });
+	res.json(productos.productos);
+});
+
+// Crear una empresa
+router.post('/', async (req, res) => {
+	const nueva_empresa = new Empresa({
 		nombre: req.body.nombre,
 		direccion: req.body.direccion,
-		productos: req.body.productos,
-		dueno: req.body.dueno,
+		horario_apertura: req.body.horario_apertura,
+		horario_cierre: req.body.horario_cierre,
+		telefono: req.body.telefono,
 		email: req.body.email,
-		telefono: req.body.telefono
+		creador: req.body.creador,
+		habilitada: req.body.habilitada,
+		productos: req.body.productos
 	});
-
-	newEmpresa.save().then(empresa => res.json(empresa));
+	await nueva_empresa.save().then(empresa => res.json(empresa));
 });
 
-// @route   DELETE api/items/:id
-// @desc    Delete A Empresa
-// @access  Public
-router.delete('/:id', (req, res) => {
-  Empresa.findById(req.params.id)
-    .then(empresa => empresa.remove().then(() => res.json({ success: true })))
-    .catch(err => res.status(404).json({ success: false }));
+// Eliminar empresa
+router.delete('/', async (req, res) => {
+	await Empresa.deleteOne({ _id: mongoose.Types.ObjectId(req.body._id), creador: req.body.creador });
+	const empresa = await Empresa.findOne({ _id: mongoose.Types.ObjectId(req.body._id) }, { _id: 1 });
+	if (req.body._id) {
+		res.json({ status: "Empresa no eliminada porque no el creador" });
+	} else {
+		res.json({ status: "Empresa eliminada" });
+	}
+
 });
 
 module.exports = router;

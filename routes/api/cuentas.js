@@ -90,4 +90,10 @@ router.put('/delCampania/:_id', async (req, res) => {
     }
 });
 
+// Obtener la lista de campañas del usuario
+router.get('/getCampanias/:_id', async (req, res) => {
+    const campanias = await Campana.find({ _id: mongoose.Types.ObjectId(req.params._id) }, { _id: 0, campanias: 1 });
+    res.json(campanias);   
+});
+
 module.exports = router;
