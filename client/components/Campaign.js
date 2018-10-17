@@ -241,6 +241,9 @@ class Campaign extends Component {
 						</Modal.Footer>
 					</Modal>
 				</div>
+				<div className= "title-separator" style={{width:"93.5%", margin:"10px -15px"}} >
+					<h3 id="campanha">Estadisticas por Campaña</h3>
+				</div>
 				<form>
 					<FormGroup>
 						<Radio name="radioGroup" inline onClick={this.changeChartFB}>

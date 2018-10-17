@@ -17,7 +17,7 @@ class CentroAcopioForm extends Component {
 			habilitada: false,
 			mapa: true,
 			basura: '',
-			lista: ["papel","plastico","aluminio","carton","vidrio","tetrapack"],
+			lista: ["papel","plastico","aluminio","carton","vidrio","tetrapack", "electronicos"],
 			lat: '',
 			long: '',
 			acc: ''

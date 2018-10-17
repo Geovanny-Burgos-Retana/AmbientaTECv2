@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import { Modal, Panel, PanelGroup, Button } from 'react-bootstrap';
+import { Modal, Panel, PanelGroup, Button,FormGroup,Radio } from 'react-bootstrap';
 
 import ChallengeModel from './ChallengeModel';
 import SocialButton from './SocialButton';
+import {XYPlot, XAxis, YAxis, VerticalGridLines, HorizontalGridLines, LineSeries} from 'react-vis';
+import "../../node_modules/react-vis/dist/style.css";
 
 class Challenge extends Component{
 	constructor(props, context){
@@ -15,6 +17,11 @@ class Challenge extends Component{
 			score: 0,
 			retosParticipacion: [],
 			retosGanados:[],
+			fbChart: [],
+			fbElements: [],
+			twChart: [],
+			ChartActual: [],
+			chart_with_fb: true,
 			show: false,
 			showW: false,
 			flag: false,
@@ -25,6 +32,8 @@ class Challenge extends Component{
 		this.handleClose = this.handleClose.bind(this);
 		this.handleShowWin = this.handleShowWin.bind(this);
 		this.handleCloseWin = this.handleCloseWin.bind(this);
+		this.changeChartFB = this.changeChartFB.bind(this);
+		this.changeChartTW = this.changeChartTW.bind(this);
 	}
 	handleShow() {
 		this.fetchChallengesW(this.state.userId);
@@ -77,7 +86,10 @@ class Challenge extends Component{
 	    .then(res => res.json())
 	    .then(data => {
 	    	var retosQuitar = this.state.retosParticipacion.concat(this.state.retosGanados);
-	    	var result = [];
+			var result = [];
+			var fbC = [];
+			var twC = [];
+			var fbEle = [];
 			data.filter((retoAux, i) =>{
 				retosQuitar.filter((entry, i) =>{
 			  		if (retoAux._id === entry._id){
@@ -89,11 +101,31 @@ class Challenge extends Component{
 				}else{
 					result.push(retoAux);
 				}
+				if(retoAux.contadorFb)
+						fbC.push({x:i, y:retoAux.contadorFb});
+					else{
+							fbC.push({x:i, y:0});
+						}
+					if(retoAux.contadorFb)
+						twC.push({x:i, y:retoAux.contadorTwitter});
+					else{
+						twC.push({x:i, y:0});
+						}
+					fbEle.push(retoAux.challengeName);
 			});	
-			this.setState({challenges: result});
+			this.setState({challenges: result, fbChart:  fbC, fbElements: fbEle, twChart: twC});
 		})
 	}
-
+	changeChartFB(){
+		this.setState({
+			chart_with_fb: true
+		})
+	}
+	changeChartTW(){
+		this.setState({
+			chart_with_fb: false
+		})
+	}
 	render() {
 		//Cargo todos los retos en Participacion que esten despues de la fecha actual
 		const retosP = this.state.retosParticipacion.map((reto, i) =>{
@@ -153,7 +185,13 @@ class Challenge extends Component{
 				</div>
 			)
 		});
-
+		const listElements = this.state.fbElements.map((nombre, i) => {
+			return (
+				<div key={i} style={{ width: "80%" }} >
+					<h4><span  style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>
+				</div>
+			)
+		});
 		return(
 	        <div className= "container">
 	        	<div className="row">			    		
@@ -194,6 +232,50 @@ class Challenge extends Component{
 							<Button onClick={this.handleCloseWin}>Close</Button>
 						</Modal.Footer>
 					</Modal>
+				</div>
+				<div className= "title-separator" style={{width:"93.5%", margin:"10px -15px"}}>
+							<h3 id="campanha">Estadisticas por Retos</h3>
+						</div>
+				<form>
+					<FormGroup>
+						<Radio name="radioGroup" inline onClick={this.changeChartFB}>
+							Facebook
+						</Radio>{' '}
+						<Radio name="radioGroup" inline onClick={this.changeChartTW}>
+							Twitter
+						</Radio>{' '}
+					</FormGroup>
+					
+				</form>
+				{this.state.chart_with_fb?
+					<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.fbChart}
+						style={{stroke: '#3b5998', strokeWidth: 4}}/>
+				</XYPlot>
+				:
+				<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.twChart}
+						style={{stroke: '#1da1f2', strokeWidth: 4}}/>
+				</XYPlot>}
+				<div className="char_info">
+					<h3>Tabla de Hashtags</h3>
+					{listElements}
 				</div>
 
 	        </div>	

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import TwitterButton from './TwitterButton';
 import {Panel, Button, Modal, PanelGroup,FormGroup,Radio} from 'react-bootstrap';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
@@ -107,6 +106,7 @@ class CentroAcopio extends Component {
 					{centros}
 				</div>
 			</div>
+			
 		)
 	}
 
