@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
 import TwitterButton from './TwitterButton';
+import {Panel, Button, Modal, PanelGroup,FormGroup,Radio} from 'react-bootstrap';
 import CampNoParti from './CampNoParti';
-import {Panel, Button, Modal, PanelGroup} from 'react-bootstrap';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
+import {XYPlot, XAxis, YAxis, VerticalGridLines, HorizontalGridLines, LineSeries} from 'react-vis';
+import "../../node_modules/react-vis/dist/style.css";
 
 class Campaign extends Component {
 	constructor(props, context) {
@@ -19,7 +21,12 @@ class Campaign extends Component {
 			descripcion: '',
 			campanas: [],
 			campsActuales:[],
+			fbChart: [],
+			fbElements: [],
+			twChart: [],
+			ChartActual: [],
 			habilitada: false,
+			chart_with_fb: true,
 			hashtag: '',
 			showComponent: true,
 			lat:'',
@@ -28,7 +35,8 @@ class Campaign extends Component {
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		
+		this.changeChartFB = this.changeChartFB.bind(this);
+		this.changeChartTW = this.changeChartTW.bind(this);
 	}
 	//Para mostrar el MODAL con las campañas en participacion
 	handleShow() {
@@ -72,7 +80,10 @@ class Campaign extends Component {
 			.then(res => res.json())
 			.then(data => {
 				var campsParticipando = this.state.campsActuales;
-		    	var result = [];
+				var result = [];
+				var fbC = [];
+				var twC = [];
+				var fbEle = [];
 				data.filter((camp, i) =>{
 					campsParticipando.filter((entry, i) =>{
 				  		if (camp._id === entry._id){
@@ -84,19 +95,42 @@ class Campaign extends Component {
 					}else{
 						result.push(camp);
 					}
+					if(camp.contadorFb)
+						fbC.push({x:i, y:camp.contadorFb});
+					else{
+							fbC.push({x:i, y:0});
+						}
+					if(camp.contadorFb)
+						twC.push({x:i, y:camp.contadorTwitter});
+					else{
+						twC.push({x:i, y:0});
+						}
+					fbEle.push(camp.nombre);
 				});	
-				this.setState({ campanas: result });
+				this.setState({ campanas: result, fbChart:  fbC, fbElements: fbEle, twChart: twC});
+				
 			});
 	}
 
-
+	changeChartFB(){
+		this.setState({
+			chart_with_fb: true
+		})
+	}
+	changeChartTW(){
+		this.setState({
+			chart_with_fb: false
+		})
+	}
 	render() {
 		const style = {
 			height: "250px",
 			width:"250px",
 			overflow: "hidden"
 		};
-
+		const listElements = this.state.fbElements.map((nombre, i) => {
+			return (<h4><span style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>)});
+		//Muestro todas las campa;as y valido que la fecha sea despues de la actual
 		const campanas = this.state.campanas.map((campana, i) => {
 			var today = new Date(),
 			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -134,7 +168,7 @@ class Campaign extends Component {
 			}
 
 		});
-
+		//Muestro todas las campa;as en participacion y valido que la fecha sea despues de la actual
 		const campaniasP = this.state.campsActuales.map((camp, i) =>{
 			var today = new Date(),
 			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -174,6 +208,8 @@ class Campaign extends Component {
 			}
 		});
 
+		
+
 		return (
 			<div className="container">
 				<div className="row">
@@ -198,13 +234,52 @@ class Campaign extends Component {
 						</Modal.Footer>
 					</Modal>
 				</div>
+				<form>
+					<FormGroup>
+						<Radio name="radioGroup" inline onClick={this.changeChartFB}>
+							Facebook
+						</Radio>{' '}
+						<Radio name="radioGroup" inline onClick={this.changeChartTW}>
+							Twitter
+						</Radio>{' '}
+					</FormGroup>
+					
+				</form>
+				{this.state.chart_with_fb?
+					<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.fbChart}
+						style={{stroke: '#3b5998', strokeWidth: 4}}/>
+				</XYPlot>
+				:
+				<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.twChart}
+						style={{stroke: '#1da1f2', strokeWidth: 4}}/>
+				</XYPlot>}
+				<div className="char_info">
+					<h3>Tabla de Hashtags</h3>
+					{listElements}
+				</div>
 			</div>
 		)
 	}
 
 }
-
-
 
 export default GoogleApiWrapper({
 	apiKey: ("AIzaSyAAkugeeJzvEG8taA8Jq1-jhFHhd-Mlygw"),

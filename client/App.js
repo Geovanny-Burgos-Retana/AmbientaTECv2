@@ -389,7 +389,7 @@ class App extends Component{
 
 						<h5>Puede participar en cualquiera de las siguientes campañas, solo marquela con un check.</h5>			    
 						<Campaign usuario={this.state} />
-
+						
 						<div className= "title-separator">
 							<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos"/></a>
 							<h3 id="reto">Challenges</h3>

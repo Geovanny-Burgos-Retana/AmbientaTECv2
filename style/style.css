@@ -160,7 +160,17 @@ body {
 Map{
     height: 100%;
 }
+.chart{
+    background-color: #f0f0f0; 
+    width: 50%;
+    float: left
+}
 
+.char_info{
+    float:left;
+    width: 30%;
+    text-align: center;
+}
 .label1{
     color: #417B64;
     font-style: bold;
