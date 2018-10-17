@@ -89,7 +89,14 @@ router.put('/addCampania/:id', function(req, res, next) {
 
 
 
-
+//Dejar de participar en una campaña
+router.put('/noParticipation/:id', function(req, res, next) {
+    Cuenta.findByIdAndUpdate(req.params.id,
+    {$pull: {campanias: req.body.campania}},
+    {safe: true, upsert: true})
+    .then(cuenta => res.json(cuenta))
+    .catch(err => res.status(404).json({ success: false }));
+});
 
 
 

@@ -27,12 +27,12 @@ class Campaign extends Component {
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		this.handleShow = this.handleShow.bind(this);
+		this.hideCampaign = this.hideCampaign.bind(this);
 		
 	}
 	//Para mostrar el MODAL con las campañas en participacion
 	handleShow() {
-		//this.fetchChallengesW(this.state.userId);
+		this.fetchCampaniasW(this.state.userId);
     	this.setState({ show: true });
 	}
 	//Para ocultar el MODAL de las campañas en participacion
@@ -51,8 +51,27 @@ class Campaign extends Component {
 			userId: usuario._id,
 			campsActuales: usuario.campanias
 		});
-		this.fetchCampanas();
+		this.fetchCampaniasW(usuario._id);
 	}
+
+	fetchCampaniasW(usuario) {
+		fetch(`/api/cuentas/unica/${usuario}`, {
+				method: 'GET',
+				headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+				}
+		}).then(res => res.json())
+		.then(data => {
+				this.setState({
+					userId: data._id,
+					campsActuales: data.campanias
+				}); 
+				this.fetchCampanas();
+			})
+
+	}
+
 	//Muestro las campañas que NO estan en participacion 
 	fetchCampanas() {
 		fetch('/api/campanas')
