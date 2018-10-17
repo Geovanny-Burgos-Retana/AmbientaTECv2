@@ -129,7 +129,12 @@ class Campaign extends Component {
 			overflow: "hidden"
 		};
 		const listElements = this.state.fbElements.map((nombre, i) => {
-			return (<h4><span style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>)});
+			return (
+				<div key={i} style={{ width: "80%" }} >
+					<h4><span  style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>
+				</div>
+			)
+		});
 		//Muestro todas las campa;as y valido que la fecha sea despues de la actual
 		const campanas = this.state.campanas.map((campana, i) => {
 			var today = new Date(),
