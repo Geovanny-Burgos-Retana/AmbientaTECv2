@@ -143,7 +143,7 @@ class Campaign extends Component {
 							</Panel.Heading>
 							<Panel.Body>
 								<div className="campana_content">
-									<p>{campana.description}</p>
+									<p>Descripcion: {campana.descripcion}</p>
 									<p>Direccion: {campana.direccion}</p>
 									<p>Organizador: {campana.organizador}</p>
 									<p>Fecha: {campana.fecha}</p>
