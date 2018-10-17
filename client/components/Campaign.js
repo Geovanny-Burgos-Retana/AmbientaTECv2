@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
-import TwitterButton from './TwitterButton';
+import SocialButton from './SocialButton';
 import {Panel, Button, Modal, PanelGroup,FormGroup,Radio} from 'react-bootstrap';
 import CampNoParti from './CampNoParti';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
@@ -31,7 +31,8 @@ class Campaign extends Component {
 			showComponent: true,
 			lat:'',
 			long: '',
-			show: false
+			show: false,
+			provider: ''
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
@@ -48,11 +49,12 @@ class Campaign extends Component {
 		this.fetchCampaniasW(this.state.userId);
     	this.setState({ show: false });
   	}
-	//Paso valores que recive el componente
+	//Paso valores que recibe el componente
 	componentDidMount() {
 		const usuario=this.props.usuario;
 		this.setState({
 			userId: usuario._id,
+			provider: usuario.provider,
 			campsActuales: usuario.campanias
 		});
 		this.fetchCampaniasW(usuario._id);
@@ -129,8 +131,13 @@ class Campaign extends Component {
 			overflow: "hidden"
 		};
 		const listElements = this.state.fbElements.map((nombre, i) => {
-			return (<h4><span style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>)});
-		//Muestro todas las campa;as y valido que la fecha sea despues de la actual
+			return (
+				<div key={i} style={{ width: "80%" }} >
+					<h4><span  style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>
+				</div>
+			)
+		});
+
 		const campanas = this.state.campanas.map((campana, i) => {
 			var today = new Date(),
 			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -168,7 +175,7 @@ class Campaign extends Component {
 			}
 
 		});
-		//Muestro todas las campa;as en participacion y valido que la fecha sea despues de la actual
+		
 		const campaniasP = this.state.campsActuales.map((camp, i) =>{
 			var today = new Date(),
 			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -189,7 +196,7 @@ class Campaign extends Component {
 									<p>Telefono: {camp.telefono}</p>
 									<p>Email: {camp.email}</p>
 									<p>Hashtag: {camp.hashtag}</p>
-									<TwitterButton camp={camp} user={this.state.userId}/>
+									<SocialButton nombre={camp.nombre} provider={this.state.provider} esCampania={true} idE={camp._id} user={this.state.userId} />
 									{camp.lat?
 									<div className="map2">
 										<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:camp.lat, lng:camp.long}}>

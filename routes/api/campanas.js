@@ -22,6 +22,15 @@ router.put('/twitterCont/:id', function(req, res, next) {
     .catch(err => res.status(404).json({ success: false }));
 });
 
+// aumentar contador de facebook de una campaña
+router.put('/facebookCont/:id', function(req, res, next) {
+    Campana.findByIdAndUpdate(req.params.id,
+    {$inc: {contadorFb: 1}},
+    {safe: true, upsert: true})
+    .then(campana => res.json(campana))
+    .catch(err => res.status(404).json({ success: false }));
+});
+
 // @route   POST api/campanas
 // @desc    Create a campana
 // @access  Public

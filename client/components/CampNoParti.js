@@ -21,7 +21,7 @@ class CampNoParti extends Component{
 		})
 	}
 	//Quita una campa;a de las que estan en participacion
-	cancelarAsistencia(campana){
+	cancelarAsistencia(){
 		fetch(`/api/cuentas/noParticipation/${this.props.user}`, {
 			method: 'PUT',
 					body: JSON.stringify({

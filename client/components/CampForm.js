@@ -63,7 +63,6 @@ class CampForm extends Component {
 	}
 
 	componentDidMount() {
-		//const uId = this.props.usuario.userID;
 		this.setState({
 			organizador: this.props.usuario.name,
 			email: this.props.usuario.email
@@ -76,7 +75,6 @@ class CampForm extends Component {
 			})),(error=>console.log(error)),{maximumAge:600000, timeout:5000, enableHighAccuracy: true};
 	}
 	
-
 	handleChange(e){
 		const {name, value} = e.target;
 		this.setState({

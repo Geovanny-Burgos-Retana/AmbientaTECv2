@@ -12,6 +12,7 @@ import CentroAcopio from './components/CentroAcopio';
 import CentroAcopioForm from './components/CentroAcopioForm';
 import Campaign from './components/Campaign';
 import SocialLogin from './components/SocialLogin';
+import ControladorSocial from './components/ControladorSocial';
 
 // Esto es JSX: Consiste en javascript con html
 //Se necesita el traductor Babel
@@ -174,8 +175,7 @@ class App extends Component{
 						return true;
 				})
 		.catch(err => console.error(err))
-
-}
+	}
 	
 	componentDidMount() {
 			auth.onAuthStateChanged((user) => {
@@ -371,9 +371,7 @@ class App extends Component{
 									<option value="paper">paper</option>
 									<option value="cans">cans</option>
 								</FormControl>
-								
-						<a href={"https://twitter.com/intent/tweet?button_hashtag=AmbientaTEC_more_"+this.state.Hashtag1+"_less_"+this.state.Hashtag2+"&ref_src=twsrc%5Etfw"} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter"/>Tweet #AmbientaTEC_more_{this.state.Hashtag1}_less_{this.state.Hashtag2}</a>
-						<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script><FormControl.Feedback />
+								<ControladorSocial provider={this.state.provider} Hashtag1={this.state.Hashtag1} Hashtag2={this.state.Hashtag2} />
 							</FormGroup></form>
 						<div className= "title-separator">
 							<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Campañas"/></a>
