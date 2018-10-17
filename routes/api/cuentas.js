@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
     await newCuenta.save().then(cuenta => res.json(cuenta));
 });
 
-/* UPDATE Account  retosParticipacion.append*/
+//Mete un reto en los que estan en participacion
 router.put('/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
     {$push: {retosParticipacion: req.body.reto}},
@@ -32,6 +32,7 @@ router.put('/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
+//Mete un reto en los ganados
 router.put('/ganar/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
     {$push: {retosGanados: req.body.reto}},
@@ -39,6 +40,7 @@ router.put('/ganar/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
+//Aumenta el SCORE de la cuenta
 router.put('/score/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
     {$set: {score: req.body.score}},
@@ -46,7 +48,7 @@ router.put('/score/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
-
+//Quita un reto de los que estan en participacion
 router.put('/participaPop/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
     {$pull: {retosParticipacion: req.body.reto}},
@@ -54,6 +56,7 @@ router.put('/participaPop/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
+//Validar si la cuenta existe
 router.get('/:id', async (req, res) => {
     console.log(req.params.id);
     await Cuenta.find(function(err, data) {
@@ -71,13 +74,12 @@ router.get('/:id', async (req, res) => {
         }
       });
   });
-
+//Devuelve una unica cuenta
 router.get('/unica/:id', async (req, res) => {
   await Cuenta.findById(req.params.id)
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
-  
 // Agregar campaña al arreglo  de identificadores de campañas
 router.put('/addCampania/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
@@ -86,9 +88,6 @@ router.put('/addCampania/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
-
-
-
 //Dejar de participar en una campaña
 router.put('/noParticipation/:id', function(req, res, next) {
     Cuenta.findByIdAndUpdate(req.params.id,
@@ -97,9 +96,6 @@ router.put('/noParticipation/:id', function(req, res, next) {
     .then(cuenta => res.json(cuenta))
     .catch(err => res.status(404).json({ success: false }));
 });
-
-
-
 
 // Eliminar campaña al arreglo de identificadores de campañas
 router.put('/delCampania/:_id', async (req, res) => {

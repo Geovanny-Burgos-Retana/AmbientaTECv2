@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Modal, Panel, PanelGroup, Button } from 'react-bootstrap';
 
 import ChallengeModel from './ChallengeModel';
-import ChallengeWin from './ChallengeWin';
+import SocialButton from './SocialButton';
 
 class Challenge extends Component{
 	constructor(props, context){
@@ -18,7 +18,8 @@ class Challenge extends Component{
 			show: false,
 			showW: false,
 			flag: false,
-			flagWin: false
+			flagWin: false,
+			provider: ''
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
@@ -44,8 +45,11 @@ class Challenge extends Component{
 
 	componentDidMount() {
 		const usuario=this.props.usuario;
+		console.log("usuario")
+		console.log(usuario.provider)
 		this.setState({
-			score: usuario.score
+			score: usuario.score,
+			provider: usuario.provider
 		})
 		this.fetchChallengesW(usuario._id);	    
 	}
@@ -104,7 +108,7 @@ class Challenge extends Component{
 					    		<p>Puntos al ganar el reto: {reto.points}</p>
 				          		<p>Descripción: {reto.description}</p>
 						      	<p>Fecha en que termina: {reto.endDate}</p>
-						      	<ChallengeWin newReto={reto} user={this.state.userId} puntos={this.state.score}  />
+						      	<SocialButton reto={reto} nombre={reto.challengeName} provider={this.state.provider} esCampania={false} idE={reto._id} user={this.state.userId} puntos={this.state.score} />
 					    	</Panel.Body>
 					  	</Panel>
 					</PanelGroup>
