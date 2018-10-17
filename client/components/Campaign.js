@@ -40,8 +40,6 @@ class Campaign extends Component {
 		this.fetchCampaniasW(this.state.userId);
     	this.setState({ show: false });
   	}
-
-
 	//Paso valores que recive el componente
 	componentDidMount() {
 		const usuario=this.props.usuario;
@@ -51,7 +49,7 @@ class Campaign extends Component {
 		});
 		this.fetchCampaniasW(usuario._id);
 	}
-
+	//Cargo las campañas en participacion
 	fetchCampaniasW(usuario) {
 		fetch(`/api/cuentas/unica/${usuario}`, {
 				method: 'GET',
@@ -67,9 +65,7 @@ class Campaign extends Component {
 				}); 
 				this.fetchCampanas();
 			})
-
 	}
-
 	//Muestro las campañas que NO estan en participacion 
 	fetchCampanas() {
 		fetch('/api/campanas')
@@ -102,71 +98,80 @@ class Campaign extends Component {
 		};
 
 		const campanas = this.state.campanas.map((campana, i) => {
-			return (
-				<div key={campana._id} style={{ width: "80%" }} >
-					<Panel bsStyle="success">
-						<Panel.Heading>
-							<Panel.Title componentClass="h3">{campana.nombre}</Panel.Title>
-						</Panel.Heading>
-						<Panel.Body>
-							<div className="campana_content">
-								<p>{campana.description}</p>
-								<p>Direccion: {campana.direccion}</p>
-								<p>Organizador: {campana.organizador}</p>
-								<p>Fecha: {campana.fecha}</p>
-								<p>Telefono: {campana.telefono}</p>
-								<p>Email: {campana.email}</p>
-								<p>Hashtag: {campana.hashtag}</p>
-								<CampParticipation camp={campana} user={this.state.userId}/>
-							</div>
-							{campana.lat?
-							<div className="map2">
-								<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:campana.lat, lng:campana.long}}>
-									<Marker position={{lat:campana.lat, lng:campana.long}}/>
-								</Map>
-							</div>
-							:
-							<h4>Esta campaña no presenta mapa.</h4>
-							}
-						</Panel.Body>
-					</Panel>
-				</div>
-			)
-		});
-
-		const campaniasP = this.state.campsActuales.map((camp, i) =>{
-			return (
-				<div key={camp._id} style={{width: "80%"}} >
-					<PanelGroup accordion id="CampParticipation">	
-						<Panel eventKey= {i} >
-					    	<Panel.Heading>
-					      		<Panel.Title toggle>{camp.nombre}</Panel.Title>
-					    	</Panel.Heading>
-					    	<Panel.Body collapsible>
-					    		{this.state.show  && <CampNoParti campania={camp} user={this.state.userId} handleCloseModal={this.handleClose} />}
-								<p>{camp.description}</p>
-								<p>Direccion: {camp.direccion}</p>
-								<p>Organizador: {camp.organizador}</p>
-								<p>Fecha: {camp.fecha}</p>
-								<p>Telefono: {camp.telefono}</p>
-								<p>Email: {camp.email}</p>
-								<p>Hashtag: {camp.hashtag}</p>
-								<TwitterButton camp={camp} user={this.state.userId}/>
-								{camp.lat?
+			var today = new Date(),
+			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+			if(campana.fecha >= date){
+				return (
+					<div key={campana._id} style={{ width: "80%" }} >
+						<Panel bsStyle="success">
+							<Panel.Heading>
+								<Panel.Title componentClass="h3">{campana.nombre}</Panel.Title>
+							</Panel.Heading>
+							<Panel.Body>
+								<div className="campana_content">
+									<p>{campana.description}</p>
+									<p>Direccion: {campana.direccion}</p>
+									<p>Organizador: {campana.organizador}</p>
+									<p>Fecha: {campana.fecha}</p>
+									<p>Telefono: {campana.telefono}</p>
+									<p>Email: {campana.email}</p>
+									<p>Hashtag: {campana.hashtag}</p>
+									<CampParticipation camp={campana} user={this.state.userId}/>
+								</div>
+								{campana.lat?
 								<div className="map2">
-									<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:camp.lat, lng:camp.long}}>
-										<Marker position={{lat:camp.lat, lng:camp.long}}/>
+									<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:campana.lat, lng:campana.long}}>
+										<Marker position={{lat:campana.lat, lng:campana.long}}/>
 									</Map>
 								</div>
 								:
 								<h4>Esta campaña no presenta mapa.</h4>
 								}
+							</Panel.Body>
+						</Panel>
+					</div>
+				)
+			}
 
-					    	</Panel.Body>
-					  	</Panel>
-					</PanelGroup>
-				</div>
-			)
+		});
+
+		const campaniasP = this.state.campsActuales.map((camp, i) =>{
+			var today = new Date(),
+			date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+			if(camp.fecha >= date){
+				return (
+					<div key={camp._id} style={{width: "80%"}} >
+						<PanelGroup accordion id="CampParticipation">	
+							<Panel eventKey= {i} >
+						    	<Panel.Heading>
+						      		<Panel.Title toggle>{camp.nombre}</Panel.Title>
+						    	</Panel.Heading>
+						    	<Panel.Body collapsible>
+						    		{this.state.show  && <CampNoParti campania={camp} user={this.state.userId} handleCloseModal={this.handleClose} />}
+									<p>{camp.description}</p>
+									<p>Direccion: {camp.direccion}</p>
+									<p>Organizador: {camp.organizador}</p>
+									<p>Fecha: {camp.fecha}</p>
+									<p>Telefono: {camp.telefono}</p>
+									<p>Email: {camp.email}</p>
+									<p>Hashtag: {camp.hashtag}</p>
+									<TwitterButton camp={camp} user={this.state.userId}/>
+									{camp.lat?
+									<div className="map2">
+										<Map google={this.props.google} zoom={14} style={style} initialCenter={{lat:camp.lat, lng:camp.long}}>
+											<Marker position={{lat:camp.lat, lng:camp.long}}/>
+										</Map>
+									</div>
+									:
+									<h4>Esta campaña no presenta mapa.</h4>
+									}
+
+						    	</Panel.Body>
+						  	</Panel>
+						</PanelGroup>
+					</div>
+				)
+			}
 		});
 
 		return (

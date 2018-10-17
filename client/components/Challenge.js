@@ -47,10 +47,9 @@ class Challenge extends Component{
 		this.setState({
 			score: usuario.score
 		})
-		this.fetchChallengesW(usuario._id);		
-		//this.fetchChallenges();	    
+		this.fetchChallengesW(usuario._id);	    
 	}
-
+	//Cargo los retos ganados y en participacion
 	fetchChallengesW(usuario) {
 		fetch(`/api/cuentas/unica/${usuario}`, {
 				method: 'GET',
@@ -67,9 +66,8 @@ class Challenge extends Component{
 				}); 
 				this.fetchChallenges();
 			})
-
 	}
-
+	//Obtengo todos los retos pero muestro solo los que no estan en participacion  y que esten ganados
 	fetchChallenges() {
 	    fetch('/api/challenges')
 	    .then(res => res.json())
@@ -93,6 +91,7 @@ class Challenge extends Component{
 	}
 
 	render() {
+		//Cargo todos los retos en Participacion que esten despues de la fecha actual
 		const retosP = this.state.retosParticipacion.map((reto, i) =>{
 			return (
 				<div key={reto._id} style={{width: "80%"}} >
@@ -112,7 +111,7 @@ class Challenge extends Component{
 				</div>
 			)
 		});
-
+		//Cargo todos los retos que esten ganados por la cuenta
 		const retosG = this.state.retosGanados.map((reto, i) =>{
 			return (
 				<div key={reto._id} style={{width: "80%"}} >
@@ -130,12 +129,8 @@ class Challenge extends Component{
 				</div>
 			)
 		});
-
-		
-		
-
+		//Cargo todos los retos que esten despues de la fecha actual
 		const retosTodos = this.state.challenges.map((reto, i) =>{
-
 			return (
 				<div key={reto._id} style={{width: "80%"}} >
 					<PanelGroup accordion id="accordion-example">	
@@ -156,7 +151,6 @@ class Challenge extends Component{
 		});
 
 		return(
-
 	        <div className= "container">
 	        	<div className="row">			    		
 		            	{retosTodos}

@@ -238,7 +238,7 @@ class App extends Component{
 								<Panel.Title componentClass="h3">{logro.nombre}</Panel.Title>
 							</Panel.Heading>
 							<Panel.Body>
-								<div className="logro_content">
+								<div className="logro_content"> 
 									<img width={100} height={100} alt="200x100" src={logro.img} />
 								</div>
 							</Panel.Body>
