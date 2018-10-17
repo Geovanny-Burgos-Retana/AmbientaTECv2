@@ -8,6 +8,8 @@ import  '../style/style.css';
 //SubComponents
 import CampForm from './components/CampForm';
 import Challenge from './components/Challenge';
+import CentroAcopio from './components/CentroAcopio';
+import CentroAcopioForm from './components/CentroAcopioForm';
 import Campaign from './components/Campaign';
 import SocialLogin from './components/SocialLogin';
 import ControladorSocial from './components/ControladorSocial';
@@ -28,6 +30,7 @@ class App extends Component{
 		this.insert = this.insert.bind(this);
 		this.userExist = this.userExist.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.handleshowCentros = this.handleshowCentros.bind(this);
 
 		this.state = {
 				_id: "",
@@ -49,6 +52,7 @@ class App extends Component{
 				Hashtag1: 'fun',
 				Hashtag2: 'trash',
 				showLogros: false,
+				showCentro: false,
 				logros: []
 		};
   	}
@@ -67,6 +71,9 @@ class App extends Component{
 		});
 	}
 
+	handleshowCentros(){
+		this.setState({ showCentro: !this.state.showCentro });
+	}
   	handleShow() {
     	this.setState({ show: true });
 	}
@@ -317,6 +324,10 @@ class App extends Component{
 								<NavItem eventKey={2} href="#reto">
 					        		Challenges
 					      		</NavItem>
+								<NavItem eventKey={2} href="#centro">
+					        		Centro de Acopio
+					      		</NavItem>
+					
 					    	</Nav>
 				  		</Navbar.Collapse>
 				</Navbar>
@@ -387,7 +398,29 @@ class App extends Component{
 
 						<h5>Puede participar en cualquiera de las siguientes campañas, solo marquela con un check.</h5>			    
 						<Campaign usuario={this.state} />
-						
+						<div className= "title-separator">
+							<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos"/></a>
+							<h3 id="centro">Centro de Acopio</h3>
+						</div>	
+						<h5>Si desea enviar una solicitud para organizar un centro de acopio presione el siguiente boton.</h5>
+						<Button bsStyle="success" bsSize="large" onClick={this.handleshowCentros} style={{margin: "20px"}}>
+							Enviar Solicitud
+						</Button>
+						       	
+						<div className= "container">
+							<Modal show={this.state.showCentro} onHide={this.handleshowCentros} style={{maxHeight:"100%"}}>
+								<Modal.Header closeButton>
+									<Modal.Title>Solicitar Centro de Acopio</Modal.Title>
+								</Modal.Header>
+								<Modal.Body>
+									<CentroAcopioForm usuario={this.state}/>
+								</Modal.Body>
+								<Modal.Footer>
+									<Button onClick={this.handleshowCentros}>Close</Button>
+								</Modal.Footer>
+							</Modal>
+						</div>
+						<CentroAcopio usuario={this.state} />
 						<div className= "title-separator">
 							<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos"/></a>
 							<h3 id="reto">Challenges</h3>

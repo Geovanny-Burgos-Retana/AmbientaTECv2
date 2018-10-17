@@ -150,7 +150,7 @@ class Campaign extends Component {
 							</Panel.Heading>
 							<Panel.Body>
 								<div className="campana_content">
-									<p>{campana.description}</p>
+									<p>Descripcion: {campana.descripcion}</p>
 									<p>Direccion: {campana.direccion}</p>
 									<p>Organizador: {campana.organizador}</p>
 									<p>Fecha: {campana.fecha}</p>
@@ -240,6 +240,9 @@ class Campaign extends Component {
 							<Button onClick={this.handleClose}>Close</Button>
 						</Modal.Footer>
 					</Modal>
+				</div>
+				<div className= "title-separator" style={{width:"93.5%", margin:"10px -15px"}} >
+					<h3 id="campanha">Estadisticas por Campaña</h3>
 				</div>
 				<form>
 					<FormGroup>
