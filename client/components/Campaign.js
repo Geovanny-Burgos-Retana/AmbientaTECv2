@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CampParticipation from './CampParticipation';
 import TwitterButton from './TwitterButton';
+import CampNoParti from './CampNoParti';
 import {Panel, Button, Modal, PanelGroup} from 'react-bootstrap';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Circle} from 'google-maps-react';
 
@@ -27,7 +28,6 @@ class Campaign extends Component {
 		};
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		this.hideCampaign = this.hideCampaign.bind(this);
 		
 	}
 	//Para mostrar el MODAL con las campañas en participacion
@@ -37,13 +37,11 @@ class Campaign extends Component {
 	}
 	//Para ocultar el MODAL de las campañas en participacion
 	handleClose() {
+		this.fetchCampaniasW(this.state.userId);
     	this.setState({ show: false });
   	}
-	hideCampaign(){
-		this.setState({
-			showComponent:false
-		})
-	}
+
+
 	//Paso valores que recive el componente
 	componentDidMount() {
 		const usuario=this.props.usuario;
@@ -145,6 +143,7 @@ class Campaign extends Component {
 					      		<Panel.Title toggle>{camp.nombre}</Panel.Title>
 					    	</Panel.Heading>
 					    	<Panel.Body collapsible>
+					    		{this.state.show  && <CampNoParti campania={camp} user={this.state.userId} handleCloseModal={this.handleClose} />}
 								<p>{camp.description}</p>
 								<p>Direccion: {camp.direccion}</p>
 								<p>Organizador: {camp.organizador}</p>
@@ -162,6 +161,7 @@ class Campaign extends Component {
 								:
 								<h4>Esta campaña no presenta mapa.</h4>
 								}
+
 					    	</Panel.Body>
 					  	</Panel>
 					</PanelGroup>
