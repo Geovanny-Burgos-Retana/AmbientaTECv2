@@ -106,7 +106,7 @@ class Challenge extends Component{
 					else{
 							fbC.push({x:i, y:0});
 						}
-					if(retoAux.contadorFb)
+					if(retoAux.contadorTwitter)
 						twC.push({x:i, y:retoAux.contadorTwitter});
 					else{
 						twC.push({x:i, y:0});

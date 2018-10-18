@@ -102,7 +102,7 @@ class Campaign extends Component {
 					else{
 							fbC.push({x:i, y:0});
 						}
-					if(camp.contadorFb)
+					if(camp.contadorTwitter)
 						twC.push({x:i, y:camp.contadorTwitter});
 					else{
 						twC.push({x:i, y:0});
