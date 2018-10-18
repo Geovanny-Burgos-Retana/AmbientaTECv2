@@ -11,6 +11,10 @@ const CuentaSchema = new Schema({
     type: String,
     required: true
   },
+  score: {
+    type: Number,
+    required: true
+  },
   name: {
     type: String,
     required: true
@@ -25,7 +29,8 @@ const CuentaSchema = new Schema({
     points: Number,
     endDate: Date,
     time: Number,
-    description: String
+    description: String,
+    hashtag: String
   }],
   retosGanados:[{
     _id:  Schema.ObjectId,
@@ -33,13 +38,29 @@ const CuentaSchema = new Schema({
     points: Number,
     endDate: Date,
     time: Number,
-    description: String
+    description: String,
+    hashtag: String
   }],
   retosPerdidos:{
     type: Array,
     required:false
   },
-  campanias:[String]
+  campanias:[{
+    _id:  Schema.ObjectId,
+    nombre:String,
+    direccion: String,
+    organizador: String,
+    fecha: Date,
+    telefono: Number,
+    email: String,
+    descripcion: String,
+    habilitada: Boolean,
+    hashtag: String,
+    contadorFb: Number, 
+    contadorTwitter: Number, 
+    lat: Number,
+    long: Number
+  }]
 });
 
 module.exports = Cuenta = mongoose.model('cuenta', CuentaSchema);

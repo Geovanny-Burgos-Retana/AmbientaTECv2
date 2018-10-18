@@ -1,33 +1,43 @@
-import React, { Component } from 'react';
-import { Modal, Panel, PanelGroup, Button } from 'react-bootstrap';
+import React, {Component} from 'react';
+import { Modal, Panel, PanelGroup, Button,FormGroup,Radio } from 'react-bootstrap';
 
 import ChallengeModel from './ChallengeModel';
-import ChallengeWin from './ChallengeWin';
+import SocialButton from './SocialButton';
+import {XYPlot, XAxis, YAxis, VerticalGridLines, HorizontalGridLines, LineSeries} from 'react-vis';
+import "../../node_modules/react-vis/dist/style.css";
 
 class Challenge extends Component {
 	constructor(props, context) {
 		super(props, context);
 
 		this.state = {
+			aux: false,
 			userId: '',
-			challenges: [],
+			challenges:[],
+			score: 0,
 			retosParticipacion: [],
-			retosGanados: [],
+			retosGanados:[],
+			fbChart: [],
+			fbElements: [],
+			twChart: [],
+			ChartActual: [],
+			chart_with_fb: true,
 			show: false,
-			showW: false
+			showW: false,
+			flag: false,
+			flagWin: false,
+			provider: ''
 		};
-
-		this.areDifferentByIds = this.areDifferentByIds.bind(this);
-		this.removeChallenge = this.removeChallenge.bind(this);
-		this.test = this.test.bind(this);
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 		this.handleShowWin = this.handleShowWin.bind(this);
 		this.handleCloseWin = this.handleCloseWin.bind(this);
+		this.changeChartFB = this.changeChartFB.bind(this);
+		this.changeChartTW = this.changeChartTW.bind(this);
 	}
 	handleShow() {
-		this.fetchChallengesP(this.state.userId);
-		this.setState({ show: true });
+		this.fetchChallengesW(this.state.userId);
+    	this.setState({ show: true });
 	}
 
 	handleClose() {
@@ -39,33 +49,20 @@ class Challenge extends Component {
 		this.setState({ showW: true });
 	}
 	handleCloseWin() {
-		this.setState({ showW: false });
-	}
+    	this.setState({ showW: false });
+  	}
+
 	componentDidMount() {
-		const usuario = this.props.usuario;
-		//console.log(usuario._id);
-		this.fetchChallengesP(usuario._id);
-		this.fetchChallengesW(usuario._id);
-		this.fetchChallenges();
-
+		const usuario=this.props.usuario;
+		console.log("usuario")
+		console.log(usuario.provider)
+		this.setState({
+			score: usuario.score,
+			provider: usuario.provider
+		})
+		this.fetchChallengesW(usuario._id);	    
 	}
-
-	fetchChallengesP(usuario) {
-		fetch(`/api/cuentas/unica/${usuario}`, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			}
-		}).then(res => res.json())
-			.then(data => {
-				this.setState({
-					userId: data._id,
-					retosParticipacion: data.retosParticipacion
-				});
-			})
-	}
-
+	//Cargo los retos ganados y en participacion
 	fetchChallengesW(usuario) {
 		fetch(`/api/cuentas/unica/${usuario}`, {
 			method: 'GET',
@@ -77,129 +74,134 @@ class Challenge extends Component {
 			.then(data => {
 				this.setState({
 					userId: data._id,
-					retosGanados: data.retosGanados
-				});
+					retosGanados: data.retosGanados,
+					retosParticipacion: data.retosParticipacion
+				}); 
+				this.fetchChallenges();
 			})
 	}
-
-	areDifferentByIds(a, b) {
-		console.log(a);
-		console.log(b);
-		var idsA = a.map((x) => { return x._id; }).sort();
-		var idsB = b.map((x) => { return x; }).sort();
-		return (idsA.join(',') === idsB.join(','));
-	}
-
+	//Obtengo todos los retos pero muestro solo los que no estan en participacion  y que esten ganados
 	fetchChallenges() {
-		fetch('/api/challenges')
-			.then(res => res.json())
-			.then(data => {
-				this.setState({ challenges: data });
-			});
-		this.test();
-		//this.setState({challenges: data});
-		//console.log(this.state.challenges);
+	    fetch('/api/challenges')
+	    .then(res => res.json())
+	    .then(data => {
+	    	var retosQuitar = this.state.retosParticipacion.concat(this.state.retosGanados);
+			var result = [];
+			var fbC = [];
+			var twC = [];
+			var fbEle = [];
+			data.filter((retoAux, i) =>{
+				retosQuitar.filter((entry, i) =>{
+			  		if (retoAux._id === entry._id){
+						this.setState({flag: true});
+			  		}
+				});
+				if (this.state.flag){
+					this.setState({flag: false});
+				}else{
+					result.push(retoAux);
+				}
+				if(retoAux.contadorFb)
+						fbC.push({x:i, y:retoAux.contadorFb});
+					else{
+							fbC.push({x:i, y:0});
+						}
+					if(retoAux.contadorFb)
+						twC.push({x:i, y:retoAux.contadorTwitter});
+					else{
+						twC.push({x:i, y:0});
+						}
+					fbEle.push(retoAux.challengeName);
+			});	
+			this.setState({challenges: result, fbChart:  fbC, fbElements: fbEle, twChart: twC});
+		})
 	}
-
-	test() {
-		const lista = this.state.retosParticipacion;
-		lista.forEach(function (entry) {
-			var array = this.state.challenges;
-			var index = array.indexOf(entry)
-			console.log(index)
-			array.splice(index, 1);
-			this.setState({ challenges: array });
-			console.log(this.state.challenges)
-		});
-
+	changeChartFB(){
+		this.setState({
+			chart_with_fb: true
+		})
 	}
-
-
-	removeChallenge(retoP) {
-		console.log(this.state.challenges);
-		var array = this.state.challenges;
-		var index = array.indexOf(retoP);
-		console.log(index);
-		if (index >= 0) {
-			console.log("IF if");
-			array.splice(index, 1);
-			this.setState({ challenges: array });
-		}
+	changeChartTW(){
+		this.setState({
+			chart_with_fb: false
+		})
 	}
-
 	render() {
-		const retosTodos = this.state.challenges.map((reto, i) => {
+		//Cargo todos los retos en Participacion que esten despues de la fecha actual
+		const retosP = this.state.retosParticipacion.map((reto, i) =>{
 			return (
-				<div key={reto._id} style={{ width: "80%" }} >
-					<PanelGroup accordion id="accordion-example">
-						<Panel eventKey={i} >
-							<Panel.Heading>
-								<Panel.Title toggle>{reto.challengeName}</Panel.Title>
-							</Panel.Heading>
-							<Panel.Body collapsible>
-								<p>Puntos al ganar el reto: {reto.points}</p>
-								<p>Descripción: {reto.description}</p>
-								<p>Fecha en que termina: {reto.endDate}</p>
-								<ChallengeModel newReto={reto} user={this.state.userId} />
-							</Panel.Body>
-						</Panel>
+				<div key={reto._id} style={{width: "80%"}} >
+					<PanelGroup accordion id="accordion-example">	
+						<Panel eventKey= {i} >
+					    	<Panel.Heading>
+					      		<Panel.Title toggle>{reto.challengeName}</Panel.Title>
+					    	</Panel.Heading>
+					    	<Panel.Body collapsible>
+					    		<p>Puntos al ganar el reto: {reto.points}</p>
+				          		<p>Descripción: {reto.description}</p>
+						      	<p>Fecha en que termina: {reto.endDate}</p>
+						      	<SocialButton reto={reto} nombre={reto.challengeName} provider={this.state.provider} esCampania={false} idE={reto._id} user={this.state.userId} puntos={this.state.score} />
+					    	</Panel.Body>
+					  	</Panel>
 					</PanelGroup>
 				</div>
 			)
 		});
-
-		const retosP = this.state.retosParticipacion.map((reto, i) => {
+		//Cargo todos los retos que esten ganados por la cuenta
+		const retosG = this.state.retosGanados.map((reto, i) =>{
 			return (
-				<div key={reto._id} style={{ width: "80%" }} >
-					<PanelGroup accordion id="accordion-example">
-						<Panel eventKey={i} >
-							<Panel.Heading>
-								<Panel.Title toggle>{reto.challengeName}</Panel.Title>
-							</Panel.Heading>
-							<Panel.Body collapsible>
-								<p>Puntos al ganar el reto: {reto.points}</p>
-								<p>Descripción: {reto.description}</p>
-								<p>Fecha en que termina: {reto.endDate}</p>
-								<a href={"https://twitter.com/intent/tweet?button_hashtag=RetoCompletado_" + reto.challengeName + "&ref_src=twsrc%5Etfw"} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter" />Tweet RetoCompletado_{reto.challengeName}</a>
-								<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-								<ChallengeWin newReto={reto} user={this.state.userId} />
-							</Panel.Body>
-						</Panel>
+				<div key={reto._id} style={{width: "80%"}} >
+					<PanelGroup accordion id="accordion-example">	
+						<Panel eventKey= {i} >
+					    	<Panel.Heading>
+					      		<Panel.Title toggle>{reto.challengeName}</Panel.Title>
+					    	</Panel.Heading>
+					    	<Panel.Body collapsible>
+					    		<p>Puntos ganados: {reto.points}</p>
+				          		<p>Descripción: {reto.description}</p>
+					    	</Panel.Body>
+					  	</Panel>
 					</PanelGroup>
 				</div>
 			)
 		});
-
-		const retosG = this.state.retosGanados.map((reto, i) => {
+		//Cargo todos los retos que esten despues de la fecha actual
+		const retosTodos = this.state.challenges.map((reto, i) =>{
 			return (
-				<div key={reto._id} style={{ width: "80%" }} >
-					<PanelGroup accordion id="accordion-example">
-						<Panel eventKey={i} >
-							<Panel.Heading>
-								<Panel.Title toggle>{reto.challengeName}</Panel.Title>
-							</Panel.Heading>
-							<Panel.Body collapsible>
-								<p>Puntos ganados: {reto.points}</p>
-								<p>Descripción: {reto.description}</p>
-							</Panel.Body>
-						</Panel>
+				<div key={reto._id} style={{width: "80%"}} >
+					<PanelGroup accordion id="accordion-example">	
+						<Panel eventKey= {i} >
+					    	<Panel.Heading>
+					      		<Panel.Title toggle>{reto.challengeName}</Panel.Title>
+					    	</Panel.Heading>
+					    	<Panel.Body collapsible>
+					    		<p>Puntos al ganar el reto: {reto.points}</p>
+				          		<p>Descripción: {reto.description}</p>
+						      	<p>Fecha en que termina: {reto.endDate}</p>
+						      	<ChallengeModel newReto={reto} allRetos={this.state.challenges} user={this.state.userId} />
+					    	</Panel.Body>
+					  	</Panel>
 					</PanelGroup>
 				</div>
 			)
 		});
-
-
-		return (
-
-			<div className="container">
-				<div className="row">
-					{retosTodos}
+		const listElements = this.state.fbElements.map((nombre, i) => {
+			return (
+				<div key={i} style={{ width: "80%" }} >
+					<h4><span  style={{color:"Tomato"}}> {i}</span> - {nombre}</h4>
 				</div>
-				<div className="col">
-					<Button bsStyle="success" bsSize="large" onClick={this.handleShow}>
-						Ver Participaciones
+			)
+		});
+		return(
+	        <div className= "container">
+	        	<div className="row">			    		
+		            	{retosTodos}
+		    	</div>	
+		    	<div className="col">
+			    	<Button bsStyle="success" bsSize="large" onClick={this.handleShow} style={{margin: "0 20px 0 0"}}>
+							Ver Participaciones
 					</Button>
-					<Button bsStyle="success" bsSize="large" onClick={this.handleShowWin} >
+			    	<Button bsStyle="success" bsSize="large"onClick={this.handleShowWin}>
 						Ver Completados
 					</Button>
 				</div>
@@ -230,6 +232,50 @@ class Challenge extends Component {
 							<Button onClick={this.handleCloseWin}>Close</Button>
 						</Modal.Footer>
 					</Modal>
+				</div>
+				<div className= "title-separator" style={{width:"93.5%", margin:"10px -15px"}}>
+							<h3 id="campanha">Estadisticas por Retos</h3>
+						</div>
+				<form>
+					<FormGroup>
+						<Radio name="radioGroup" inline onClick={this.changeChartFB}>
+							Facebook
+						</Radio>{' '}
+						<Radio name="radioGroup" inline onClick={this.changeChartTW}>
+							Twitter
+						</Radio>{' '}
+					</FormGroup>
+					
+				</form>
+				{this.state.chart_with_fb?
+					<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.fbChart}
+						style={{stroke: '#3b5998', strokeWidth: 4}}/>
+				</XYPlot>
+				:
+				<XYPlot
+					width={400}
+					height={400}
+					className="chart">
+					<VerticalGridLines />
+					<HorizontalGridLines />
+					<XAxis title="Hashtag"/>
+					<YAxis title="Uso total por hashtag" />
+					<LineSeries
+						data={this.state.twChart}
+						style={{stroke: '#1da1f2', strokeWidth: 4}}/>
+				</XYPlot>}
+				<div className="char_info">
+					<h3>Tabla de Hashtags</h3>
+					{listElements}
 				</div>
 
 			</div>

@@ -12,6 +12,8 @@ const challenges = require('./routes/api/challenges');
 const tips = require('./routes/api/tips');
 const recomendaciones = require('./routes/api/recomendaciones');
 const hasthagMoreLess = require('./routes/api/hashtagsMoreLess');
+const logro = require('./routes/api/logros');
+const centros = require('./routes/api/centros');
 
 
 const app = express();
@@ -38,6 +40,8 @@ app.use('/api/challenges', challenges);
 app.use('/api/tips', tips);
 app.use('/api/recomendaciones', recomendaciones);
 app.use('/api/hashtagMoreLess', hasthagMoreLess);
+app.use('/api/logros', logro);
+app.use('/api/centros', centros);
 
 //Static files
 
