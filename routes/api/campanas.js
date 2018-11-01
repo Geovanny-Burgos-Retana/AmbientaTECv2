@@ -17,6 +17,27 @@ router.get('/get_camps_inv', async (req, res) => {
 });
 
 // Crear una campaña que necesita permisos de visualización por SU
+// aumentar contador de twitter de una campaña
+router.put('/twitterCont/:id', function(req, res, next) {
+    Campana.findByIdAndUpdate(req.params.id,
+    {$inc: {contadorTwitter: 1}},
+    {safe: true, upsert: true})
+    .then(campana => res.json(campana))
+    .catch(err => res.status(404).json({ success: false }));
+});
+
+// aumentar contador de facebook de una campaña
+router.put('/facebookCont/:id', function(req, res, next) {
+    Campana.findByIdAndUpdate(req.params.id,
+    {$inc: {contadorFb: 1}},
+    {safe: true, upsert: true})
+    .then(campana => res.json(campana))
+    .catch(err => res.status(404).json({ success: false }));
+});
+
+// @route   POST api/campanas
+// @desc    Create a campana
+// @access  Public
 router.post('/', (req, res) => {
 	const newCampana = new Campana({
 		nombre: req.body.nombre,
@@ -27,7 +48,11 @@ router.post('/', (req, res) => {
 		email: req.body.email,
 		descripcion: req.body.descripcion,
 		habilitada: req.body.habilitada,
-		hashtag: req.body.hashtag
+		hashtag: req.body.hashtag,
+		contadorFb: req.body.contadorFb,
+		contadorTwitter: req.body.contadorTwitter,
+		lat: req.body.lat,
+		long: req.body.long
 	});
 	newCampana.save().then(campana => res.json(campana));
 });

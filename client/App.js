@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Navigation from './components/Navigation';
-import { Carousel, Modal, Button, Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Carousel, Modal, Button, Navbar, Nav, NavItem, NavDropdown, MenuItem, Panel } from 'react-bootstrap';
 import { auth, providerTwitter, providerFacebook } from '../firebase.js';
 import { HelpBlock, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
 import '../style/style.css';
@@ -8,9 +8,12 @@ import '../style/style.css';
 //SubComponents
 import CampForm from './components/CampForm';
 import Challenge from './components/Challenge';
+import CentroAcopio from './components/CentroAcopio';
+import CentroAcopioForm from './components/CentroAcopioForm';
 import Campaign from './components/Campaign';
 import SocialLogin from './components/SocialLogin';
 import Empresa from './components/Empresa';
+import ControladorSocial from './components/ControladorSocial';
 
 // Esto es JSX: Consiste en javascript con html
 //Se necesita el traductor Babel
@@ -20,13 +23,15 @@ class App extends Component {
 		super(props, context);
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this.handleShowLogros = this.handleShowLogros.bind(this);
+		this.handleCloseLogros = this.handleCloseLogros.bind(this);
 		this.loginTwitter = this.loginTwitter.bind(this); // <-- add this line
 		this.loginFacebook = this.loginFacebook.bind(this); // <-- add this line
 		this.logout = this.logout.bind(this); // <-- add this line
 		this.insert = this.insert.bind(this);
 		this.userExist = this.userExist.bind(this);
-		this.escogerTip = this.escogerTip.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.handleshowCentros = this.handleshowCentros.bind(this);
 
 		this.state = {
 			_id: "",
@@ -34,22 +39,30 @@ class App extends Component {
 			isLoggedIn: false,
 			provider: "",
 			userID: "",
+			score: 0,
 			name: "",
 			email: "",
 			picture: "",
 			contador: 0,
 			retosParticipacion: [],
 			retosGanados: [],
+			campanias: [],
 			tips: [],
 			recomendaciones: [],
 			tipActual: [],
 			Hashtag1: 'fun',
-			Hashtag2: 'trash'
+			Hashtag2: 'trash',
+			showLogros: false,
+			showCentro: false,
+			logros: []
 		};
 	}
 
 	handleClose() {
 		this.setState({ show: false });
+	}
+	handleCloseLogros() {
+		this.setState({ showLogros: false });
 	}
 
 	handleChange(e) {
@@ -59,15 +72,31 @@ class App extends Component {
 		});
 	}
 
+	handleshowCentros() {
+		this.setState({ showCentro: !this.state.showCentro });
+	}
 	handleShow() {
 		this.setState({ show: true });
 	}
 
+	handleShowLogros() {
+		this.setState({ showLogros: true });
+	}
 	fetchTips() {
 		fetch('/api/tips')
 			.then(res => res.json())
 			.then(data => {
 				this.setState({ tips: data });
+
+			});
+	}
+
+
+	fetchLogros() {
+		fetch('/api/logros')
+			.then(res => res.json())
+			.then(data => {
+				this.setState({ logros: data });
 
 			});
 	}
@@ -93,12 +122,14 @@ class App extends Component {
 					this.setState({
 						_id: data._id,
 						isLoggedIn: true,
+						score: data.score,
 						provider: data.provider,
 						userID: data.uid,
 						name: data.name,
 						email: data.email,
 						picture: user.photoURL,
 						retosParticipacion: data.retosParticipacion,
+						campanias: data.campanias,
 						contador: 0
 					});
 
@@ -113,6 +144,7 @@ class App extends Component {
 						email: user.email,
 						retosParticipacion: [],
 						retosGanados: [],
+						campanias: [],
 						contador: 0
 					});
 					fetch('/api/cuentas', {
@@ -126,6 +158,7 @@ class App extends Component {
 						.catch(err => console.error("ERROR al registrar el usuasrio: " + err))
 					this.setState({
 						isLoggedIn: true,
+						score: 0,
 						provider: user.providerId,
 						userID: user.uid,
 						name: user.displayName,
@@ -133,6 +166,7 @@ class App extends Component {
 						picture: user.photoURL,
 						retosParticipacion: [],
 						retosGanados: [],
+						campanias: [],
 						contador: 0
 					});
 					return false;
@@ -142,7 +176,6 @@ class App extends Component {
 				return true;
 			})
 			.catch(err => console.error(err))
-
 	}
 
 	componentDidMount() {
@@ -160,6 +193,7 @@ class App extends Component {
 		});
 		this.fetchTips();
 		this.fetchRecomendaciones();
+		this.fetchLogros();
 	}
 
 	logout() {
@@ -190,38 +224,8 @@ class App extends Component {
 		});
 	}
 
-	escogerTip() {
-		if (this.state.contador <= this.state.tips.length()) {
-			this.setState({
-				contador: this.state.contador + 1,
-				tipActual: this.state.tips.map((tip, i) => {
-					console.log(this.state.tips.length)
-					if (i === this.state.contador) {
-						console.log("Dentro IFFF");
-						return (
-							<div key={tip._id} style={{ width: "80%" }} >
-								<p>{tip.nombre}</p>
-								<img className="element-img" src={tip.foto} alt="Info" />
-								<p>{tip.descripcion}</p>
-
-							</div>
-						)
-					}
-				})
-			});
-		} else {
-			this.setState({
-				contador: 0
-			})
-		}
-
-
-
-	}
-
 	render() {
 		const tips = this.state.tips.map((tip, i) => {
-
 			return (
 				<Carousel.Item key={tip._id}>
 					<img width={900} height={500} alt="900x500" src={tip.foto} />
@@ -231,6 +235,26 @@ class App extends Component {
 					</Carousel.Caption>
 				</Carousel.Item>
 			)
+		});
+
+		const logros = this.state.logros.map((logro, i) => {
+			if (logro.score <= this.state.score) {
+				return (
+					<div key={logro._id} style={{ width: "80%" }} >
+						<Panel bsStyle="success">
+							<Panel.Heading>
+								<Panel.Title componentClass="h3">{logro.nombre}</Panel.Title>
+							</Panel.Heading>
+							<Panel.Body>
+								<div className="logro_content">
+									<img width={100} height={100} alt="200x100" src={logro.img} />
+								</div>
+							</Panel.Body>
+						</Panel>
+					</div>
+				)
+			}
+
 		});
 
 		const recomendaciones = this.state.recomendaciones.map((tip, i) => {
@@ -251,9 +275,10 @@ class App extends Component {
 					{this.state.isLoggedIn ?
 						<div className="user-logged">
 							<img src={this.state.picture} alt={this.state.name} />
-							<p>Estás logueado con {this.state.provider}</p>
 							<p>Bienvenido {this.state.name}</p>
 							<p><strong>Email:</strong> {this.state.email} </p>
+							<p><strong>Score:</strong> {this.state.score}</p>
+							<button onClick={this.handleShowLogros}>Ver Logros</button>
 							<button onClick={this.logout}>LOG OUT</button>
 						</div>
 						:
@@ -266,6 +291,21 @@ class App extends Component {
                     </button>
 						</div>
 					}
+
+					<div className="container">
+						<Modal show={this.state.showLogros} onHide={this.handleCloseLogros} style={{ maxHeight: "100%" }}>
+							<Modal.Header closeButton>
+								<Modal.Title>Logros</Modal.Title>
+							</Modal.Header>
+							<Modal.Body>
+								{logros}
+							</Modal.Body>
+							<Modal.Footer>
+								<Button onClick={this.handleCloseLogros}>Close</Button>
+							</Modal.Footer>
+						</Modal>
+					</div>
+
 					<img className="img-portada" src="https://noticias.utpl.edu.ec/sites/default/files/imagenes_editor/gestion_ambiental-02.jpg" alt="Portada" />
 					<Navbar id="navver" inverse collapseOnSelect >
 						<Navbar.Header>
@@ -284,6 +324,9 @@ class App extends Component {
 					      		</NavItem>
 								<NavItem eventKey={2} href="#reto">
 									Challenges
+					      		</NavItem>
+								<NavItem eventKey={2} href="#centro">
+									Centro de Acopio
 					      		</NavItem>
 								<NavItem eventKey={4} href="#seccion_empresas">
 									Empresas
@@ -331,21 +374,19 @@ class App extends Component {
 										<option value="paper">paper</option>
 										<option value="cans">cans</option>
 									</FormControl>
-
-									<a href={"https://twitter.com/intent/tweet?button_hashtag=AmbientaTEC_more_" + this.state.Hashtag1 + "_less_" + this.state.Hashtag2 + "&ref_src=twsrc%5Etfw"} className="twitter-hashtag-button" data-show-count="false"><img src="http://static.sites.yp.com/var/m_6/6b/6bd/11192116/1470938-twitter.png?v=6.5.1.37806" alt="Twitter" />Tweet #AmbientaTEC_more_{this.state.Hashtag1}_less_{this.state.Hashtag2}</a>
-									<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script><FormControl.Feedback />
+									<ControladorSocial provider={this.state.provider} Hashtag1={this.state.Hashtag1} Hashtag2={this.state.Hashtag2} />
 								</FormGroup></form>
 							<div className="title-separator">
 								<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Campañas" /></a>
 								<h3 id="campanha">Campañas</h3>
 							</div>
 							<h5>Si desea enviar una solicitud para organizar una campaña presione el siguiente boton.</h5>
-							<Button bsStyle="success" bsSize="large" onClick={this.handleShow}>
+							<Button bsStyle="success" bsSize="large" onClick={this.handleShow} style={{ margin: "20px" }}>
 								Enviar solicitud
-							</Button>
+						</Button>
 
 							<div className="container">
-								<Modal show={this.state.show} onHide={this.handleClose}>
+								<Modal show={this.state.show} onHide={this.handleClose} style={{ maxHeight: "100%" }}>
 									<Modal.Header closeButton>
 										<Modal.Title>Solicitar campaña</Modal.Title>
 									</Modal.Header>
@@ -360,7 +401,29 @@ class App extends Component {
 
 							<h5>Puede participar en cualquiera de las siguientes campañas, solo marquela con un check.</h5>
 							<Campaign usuario={this.state} />
+							<div className="title-separator">
+								<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos" /></a>
+								<h3 id="centro">Centro de Acopio</h3>
+							</div>
+							<h5>Si desea enviar una solicitud para organizar un centro de acopio presione el siguiente boton.</h5>
+							<Button bsStyle="success" bsSize="large" onClick={this.handleshowCentros} style={{ margin: "20px" }}>
+								Enviar Solicitud
+						</Button>
 
+							<div className="container">
+								<Modal show={this.state.showCentro} onHide={this.handleshowCentros} style={{ maxHeight: "100%" }}>
+									<Modal.Header closeButton>
+										<Modal.Title>Solicitar Centro de Acopio</Modal.Title>
+									</Modal.Header>
+									<Modal.Body>
+										<CentroAcopioForm usuario={this.state} />
+									</Modal.Body>
+									<Modal.Footer>
+										<Button onClick={this.handleshowCentros}>Close</Button>
+									</Modal.Footer>
+								</Modal>
+							</div>
+							<CentroAcopio usuario={this.state} />
 							<div className="title-separator">
 								<a href="#App"><img src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/65-512.png" alt="Retos" /></a>
 								<h3 id="reto">Challenges</h3>

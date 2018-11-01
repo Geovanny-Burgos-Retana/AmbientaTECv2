@@ -219,7 +219,7 @@ class Empresa extends Component {
     render() {
         let filteredEmpresas = this.state.empresas.filter(
             (empresa) => {
-                return empresa.nombre.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1;
+                return empresa.nombre.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1 || empresa.direccion.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1;
             }
         );
 
@@ -321,7 +321,7 @@ class Empresa extends Component {
                                 <button type="submit" className="btn light-blue darken-4">ENVIAR</button>
                             </Modal.Footer>
                         </form>
-                        <form onSubmit={this.agregar_producto} className="form-campanas" id="new_product_form" style={{ visibility: "hidden" }}>
+                        <form onSubmit={this.agregar_producto.bind(this)} className="form-campanas" id="new_product_form" style={{ visibility: "hidden" }}>
                             <Modal.Header>
                                 <Modal.Title>Creación de producto nuevo</Modal.Title>
                             </Modal.Header>

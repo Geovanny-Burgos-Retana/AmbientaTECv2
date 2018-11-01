@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser= require('body-parser');
+const bodyParser = require('body-parser');
 const path = require('path');
 
 const empresas = require('./routes/api/empresas');
@@ -12,6 +12,8 @@ const challenges = require('./routes/api/challenges');
 const tips = require('./routes/api/tips');
 const recomendaciones = require('./routes/api/recomendaciones');
 const hasthagMoreLess = require('./routes/api/hashtagsMoreLess');
+const logro = require('./routes/api/logros');
+const centros = require('./routes/api/centros');
 
 
 const app = express();
@@ -20,7 +22,7 @@ const app = express();
 app.use(bodyParser.json());
 
 //Configuracion de la base de datos
-const db = require('./config/keys'). mongoURI; //URl de MONGOLAB
+const db = require('./config/keys').mongoURI; //URl de MONGOLAB
 
 //Conexion a mongo
 mongoose
@@ -38,6 +40,8 @@ app.use('/api/challenges', challenges);
 app.use('/api/tips', tips);
 app.use('/api/recomendaciones', recomendaciones);
 app.use('/api/hashtagMoreLess', hasthagMoreLess);
+app.use('/api/logros', logro);
+app.use('/api/centros', centros);
 
 //Static files
 
